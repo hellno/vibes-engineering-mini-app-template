@@ -6,8 +6,13 @@ const redis = new Redis({
   token: process.env.KV_REST_API_TOKEN,
 });
 
+
+function getProjectKey(): string {
+  return "frames-v2-demo";
+}
+
 function getUserNotificationDetailsKey(fid: number): string {
-  return `frames-v2-demo:user:${fid}`;
+  return `${getProjectKey()}:${fid}`;
 }
 
 export async function getUserNotificationDetails(

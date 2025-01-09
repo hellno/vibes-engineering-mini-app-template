@@ -12,7 +12,8 @@ export default async function Image() {
   return new ImageResponse(
     (
       <div tw="h-full w-full flex flex-col justify-center items-center relative bg-white">
-        <h1 tw="text-6xl">Frames v2 Demo</h1>
+        <h1 tw="text-6xl">Frames Frames Template</h1>
+        <h3 tw="text-2xl">A Farcaster Frames v2 Template by hellno</h3>
       </div>
     ),
     {
