@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import App from "./app";
+import { PROJECT_TITLE, PROJECT_DESCRIPTION } from "~/lib/constants";
 
 const appUrl = process.env.NEXT_PUBLIC_URL;
 
@@ -10,7 +11,7 @@ const frame = {
     title: "Launch Frame",
     action: {
       type: "launch_frame",
-      name: "Farcaster Frames v2 Demo",
+      name: PROJECT_TITLE,
       url: appUrl,
       splashImageUrl: `${appUrl}/splash.png`,
       splashBackgroundColor: "#f7f7f7",
@@ -22,10 +23,10 @@ export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Farcaster Frames v2 Demo",
+    title: PROJECT_TITLE,
     openGraph: {
-      title: "Farcaster Frames v2 Demo",
-      description: "A Farcaster Frames v2 demo app.",
+      title: PROJECT_TITLE,
+      description: PROJECT_DESCRIPTION,
     },
     other: {
       "fc:frame": JSON.stringify(frame),

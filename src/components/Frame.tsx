@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useCallback, useState, useMemo } from "react";
-import { Input } from "../components/ui/input"
+import { Input } from "./ui/input"
 import { signIn, signOut, getCsrfToken } from "next-auth/react";
 import sdk, {
     AddFrame,
@@ -31,7 +31,7 @@ import { createStore } from 'mipd'
 import { Label } from "~/components/ui/label";
 
 
-export default function Demo(
+export default function Frame(
   { title }: { title?: string } = { title: "Frames v2 Demo" }
 ) {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
@@ -91,6 +91,10 @@ export default function Demo(
   useEffect(() => {
     const load = async () => {
       const context = await sdk.context;
+      if (!context) {
+        return;
+      }
+
       setContext(context);
       setAdded(context.client.added);
 
@@ -290,7 +294,7 @@ store.subscribe(providerDetails => {
 
           {isContextOpen && (
             <div className="p-4 mt-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
-              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+              <pre className="text-background font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-0">
                 {JSON.stringify(context, null, 2)}
               </pre>
             </div>
@@ -302,7 +306,7 @@ store.subscribe(providerDetails => {
 
           <div className="mb-4">
             <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+              <pre className="text-background font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-0">
                 sdk.actions.signIn
               </pre>
             </div>
@@ -311,7 +315,7 @@ store.subscribe(providerDetails => {
 
           <div className="mb-4">
             <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+              <pre className="text-background font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-0">
                 sdk.actions.openUrl
               </pre>
             </div>
@@ -320,7 +324,7 @@ store.subscribe(providerDetails => {
 
           <div className="mb-4">
             <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+              <pre className="text-background font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-0">
                 sdk.actions.openUrl
               </pre>
             </div>
@@ -329,7 +333,7 @@ store.subscribe(providerDetails => {
 
           <div className="mb-4">
             <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+              <pre className="text-background font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-0">
                 sdk.actions.viewProfile
               </pre>
             </div>
@@ -338,7 +342,7 @@ store.subscribe(providerDetails => {
 
           <div className="mb-4">
             <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+              <pre className="text-background font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-0">
                 sdk.actions.close
               </pre>
             </div>
@@ -350,7 +354,7 @@ store.subscribe(providerDetails => {
           <h2 className="font-2xl font-bold">Last event</h2>
 
           <div className="p-4 mt-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
-            <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+            <pre className="text-background font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-0">
               {lastEvent || "none"}
             </pre>
           </div>
@@ -369,7 +373,7 @@ store.subscribe(providerDetails => {
 
           <div className="mb-4">
             <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+              <pre className="text-background font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-0">
                 sdk.actions.addFrame
               </pre>
             </div>

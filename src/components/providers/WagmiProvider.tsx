@@ -1,4 +1,4 @@
-import { createConfig, http, WagmiProvider } from "wagmi";
+import { createConfig, http, injected, WagmiProvider } from "wagmi";
 import { base, optimism } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { farcasterFrame } from "@farcaster/frame-wagmi-connector";
@@ -9,7 +9,7 @@ export const config = createConfig({
     [base.id]: http(),
     [optimism.id]: http(),
   },
-  connectors: [farcasterFrame()],
+  connectors: [farcasterFrame(), injected()],
 });
 
 const queryClient = new QueryClient();

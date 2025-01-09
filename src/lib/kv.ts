@@ -1,13 +1,18 @@
 import { FrameNotificationDetails } from "@farcaster/frame-sdk";
 import { Redis } from "@upstash/redis";
+import { PROJECT_ID } from "~/lib/constants";
 
 const redis = new Redis({
   url: process.env.KV_REST_API_URL,
   token: process.env.KV_REST_API_TOKEN,
 });
 
+function getProjectKey(): string {
+  return PROJECT_ID;
+}
+
 function getUserNotificationDetailsKey(fid: number): string {
-  return `frames-v2-demo:user:${fid}`;
+  return `${getProjectKey()}:${fid}`;
 }
 
 export async function getUserNotificationDetails(
