@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-
 import { getSession } from "~/auth"
+import { PROJECT_TITLE, PROJECT_DESCRIPTION } from "~/lib/constants";
 import "~/app/globals.css";
 import { Providers } from "~/app/providers";
 
 export const metadata: Metadata = {
-  title: "Farcaster Frames v2 Demo",
-  description: "A Farcaster Frames v2 demo app",
+  title: PROJECT_TITLE,
+  description: PROJECT_DESCRIPTION,
 };
 
 export default async function RootLayout({
