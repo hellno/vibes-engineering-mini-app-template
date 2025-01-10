@@ -22,7 +22,7 @@ import {
 } from "wagmi";
 
 import { config } from "~/components/providers/WagmiProvider";
-import { Button } from "~/components/ui/Button";
+import { PurpleButton } from "~/components/ui/PurpleButton";
 import { truncateAddress } from "~/lib/truncateAddress";
 import { base, optimism } from "wagmi/chains";
 import { BaseError, UserRejectedRequestError } from "viem";
@@ -278,7 +278,7 @@ store.subscribe(providerDetails => {
 
         <div className="mb-4">
           <h2 className="font-2xl font-bold">Context</h2>
-          <button
+          <PurpleButton
             onClick={toggleContext}
             className="flex items-center gap-2 transition-colors"
           >
@@ -290,7 +290,7 @@ store.subscribe(providerDetails => {
               ➤
             </span>
             Tap to expand
-          </button>
+          </PurpleButton>
 
           {isContextOpen && (
             <div className="p-4 mt-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
@@ -319,7 +319,7 @@ store.subscribe(providerDetails => {
                 sdk.actions.openUrl
               </pre>
             </div>
-            <Button onClick={openUrl}>Open Link</Button>
+            <PurpleButton onClick={openUrl}>Open Link</PurpleButton>
           </div>
 
           <div className="mb-4">
@@ -328,7 +328,7 @@ store.subscribe(providerDetails => {
                 sdk.actions.openUrl
               </pre>
             </div>
-            <Button onClick={openWarpcastUrl}>Open Warpcast Link</Button>
+            <PurpleButton onClick={openWarpcastUrl}>Open Warpcast Link</PurpleButton>
           </div>
 
           <div className="mb-4">
@@ -346,7 +346,7 @@ store.subscribe(providerDetails => {
                 sdk.actions.close
               </pre>
             </div>
-            <Button onClick={close}>Close Frame</Button>
+            <PurpleButton onClick={close}>Close Frame</PurpleButton>
           </div>
         </div>
 
@@ -382,9 +382,9 @@ store.subscribe(providerDetails => {
                 Add frame result: {addFrameResult}
               </div>
             )}
-            <Button onClick={addFrame} disabled={added}>
+            <PurpleButton onClick={addFrame} disabled={added}>
               Add frame to client
-            </Button>
+            </PurpleButton>
           </div>
 
           {sendNotificationResult && (
@@ -393,9 +393,9 @@ store.subscribe(providerDetails => {
             </div>
           )}
           <div className="mb-4">
-            <Button onClick={sendNotification} disabled={!notificationDetails}>
+            <PurpleButton onClick={sendNotification} disabled={!notificationDetails}>
               Send notification
-            </Button>
+            </PurpleButton>
           </div>
         </div>
 
@@ -415,7 +415,7 @@ store.subscribe(providerDetails => {
           )}
 
           <div className="mb-4">
-            <Button
+            <PurpleButton
               onClick={() =>
                 isConnected
                   ? disconnect()
@@ -423,7 +423,7 @@ store.subscribe(providerDetails => {
               }
             >
               {isConnected ? "Disconnect" : "Connect"}
-            </Button>
+            </PurpleButton>
           </div>
 
           <div className="mb-4">
@@ -436,13 +436,13 @@ store.subscribe(providerDetails => {
                 <SendEth />
               </div>
               <div className="mb-4">
-                <Button
+                <PurpleButton
                   onClick={sendTx}
                   disabled={!isConnected || isSendTxPending}
                   isLoading={isSendTxPending}
                 >
                   Send Transaction (contract)
-                </Button>
+                </PurpleButton>
                 {isSendTxError && renderError(sendTxError)}
                 {txHash && (
                   <div className="mt-2 text-xs">
@@ -459,23 +459,23 @@ store.subscribe(providerDetails => {
                 )}
               </div>
               <div className="mb-4">
-                <Button
+                <PurpleButton
                   onClick={signTyped}
                   disabled={!isConnected || isSignTypedPending}
                   isLoading={isSignTypedPending}
                 >
                   Sign Typed Data
-                </Button>
+                </PurpleButton>
                 {isSignTypedError && renderError(signTypedError)}
               </div>
               <div className="mb-4">
-                <Button
+                <PurpleButton
                   onClick={handleSwitchChain}
                   disabled={isSwitchChainPending}
                   isLoading={isSwitchChainPending}
                 >
                   Switch to {chainId === base.id ? "Optimism" : "Base"}
-                </Button>
+                </PurpleButton>
                 {isSwitchChainError && renderError(switchChainError)}
               </div>
             </>
@@ -510,13 +510,13 @@ function SignMessage() {
 
   return (
     <>
-      <Button
+      <PurpleButton
         onClick={handleSignMessage}
         disabled={isSignPending}
         isLoading={isSignPending}
       >
         Sign Message
-      </Button>
+      </PurpleButton>
       {isSignError && renderError(signError)}
       {signature && (
         <div className="mt-2 text-xs">
@@ -558,13 +558,13 @@ function SendEth() {
 
   return (
     <>
-      <Button
+      <PurpleButton
         onClick={handleSend}
         disabled={!isConnected || isSendTxPending}
         isLoading={isSendTxPending}
       >
         Send Transaction (eth)
-      </Button>
+      </PurpleButton>
       {isSendTxError && renderError(sendTxError)}
       {data && (
         <div className="mt-2 text-xs">
@@ -634,20 +634,20 @@ function SignIn() {
   return (
     <>
       {status !== "authenticated" &&
-        <Button
+        <PurpleButton
           onClick={handleSignIn}
           disabled={signingIn}
         >
           Sign In with Farcaster
-        </Button>
+        </PurpleButton>
       }
       {status === "authenticated" &&
-        <Button
+        <PurpleButton
           onClick={handleSignOut}
           disabled={signingOut}
         >
           Sign out
-        </Button>
+        </PurpleButton>
       }
       {session &&
         <div className="my-2 p-2 text-xs overflow-x-scroll bg-gray-100 rounded-lg font-mono">
@@ -690,11 +690,11 @@ function ViewProfile() {
           min="1"
         />
       </div>
-      <Button
+      <PurpleButton
         onClick={() => { sdk.actions.viewProfile({ fid: parseInt(fid) }) }}
       >
         View Profile
-      </Button>
+      </PurpleButton>
     </>
   );
 }
