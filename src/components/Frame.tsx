@@ -29,10 +29,11 @@ import { BaseError, UserRejectedRequestError } from "viem";
 import { useSession } from "next-auth/react"
 import { createStore } from 'mipd'
 import { Label } from "~/components/ui/label";
+import { PROJECT_TITLE } from "~/lib/constants";
 
 
 export default function Frame(
-  { title }: { title?: string } = { title: "Frames v2 Demo" }
+  { title }: { title?: string } = { title: PROJECT_TITLE }
 ) {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [context, setContext] = useState<Context.FrameContext>();
@@ -259,7 +260,7 @@ store.subscribe(providerDetails => {
   }, [chainId, signTypedData]);
 
   const toggleContext = useCallback(() => {
-    setIsContextOpen((prev) => !prev);
+    setIsContextOpen((Labelv) => !Labelv);
   }, []);
 
   if (!isSDKLoaded) {
@@ -294,9 +295,9 @@ store.subscribe(providerDetails => {
 
           {isContextOpen && (
             <div className="p-4 mt-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
-              <pre className="text-background font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-0">
+              <Label className="font-mono text-xs whitespace-Label-wrap break-words max-w-[260px] overflow-x-0">
                 {JSON.stringify(context, null, 2)}
-              </pre>
+              </Label>
             </div>
           )}
         </div>
@@ -306,45 +307,45 @@ store.subscribe(providerDetails => {
 
           <div className="mb-4">
             <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="text-background font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-0">
+              <Label className="font-mono text-xs whitespace-Label-wrap break-words max-w-[260px] overflow-x-0">
                 sdk.actions.signIn
-              </pre>
+              </Label>
             </div>
             <SignIn />
           </div>
 
           <div className="mb-4">
             <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="text-background font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-0">
+              <Label className="font-mono text-xs whitespace-Label-wrap break-words max-w-[260px] overflow-x-0">
                 sdk.actions.openUrl
-              </pre>
+              </Label>
             </div>
             <PurpleButton onClick={openUrl}>Open Link</PurpleButton>
           </div>
 
           <div className="mb-4">
             <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="text-background font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-0">
+              <Label className="font-mono text-xs whitespace-Label-wrap break-words max-w-[260px] overflow-x-0">
                 sdk.actions.openUrl
-              </pre>
+              </Label>
             </div>
             <PurpleButton onClick={openWarpcastUrl}>Open Warpcast Link</PurpleButton>
           </div>
 
           <div className="mb-4">
             <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="text-background font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-0">
+              <Label className="font-mono text-xs whitespace-Label-wrap break-words max-w-[260px] overflow-x-0">
                 sdk.actions.viewProfile
-              </pre>
+              </Label>
             </div>
             <ViewProfile />
           </div>
 
           <div className="mb-4">
             <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="text-background font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-0">
+              <Label className="font-mono text-xs whitespace-Label-wrap break-words max-w-[260px] overflow-x-0">
                 sdk.actions.close
-              </pre>
+              </Label>
             </div>
             <PurpleButton onClick={close}>Close Frame</PurpleButton>
           </div>
@@ -354,9 +355,9 @@ store.subscribe(providerDetails => {
           <h2 className="font-2xl font-bold">Last event</h2>
 
           <div className="p-4 mt-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
-            <pre className="text-background font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-0">
+            <Label className="font-mono text-xs whitespace-Label-wrap break-words max-w-[260px] overflow-x-0">
               {lastEvent || "none"}
-            </pre>
+            </Label>
           </div>
         </div>
 
@@ -373,9 +374,9 @@ store.subscribe(providerDetails => {
 
           <div className="mb-4">
             <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-              <pre className="text-background font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-0">
+              <Label className="font-mono text-xs whitespace-Label-wrap break-words max-w-[260px] overflow-x-0">
                 sdk.actions.addFrame
-              </pre>
+              </Label>
             </div>
             {addFrameResult && (
               <div className="mb-2 text-sm">
@@ -404,13 +405,13 @@ store.subscribe(providerDetails => {
 
           {address && (
             <div className="my-2 text-xs">
-              Address: <pre className="inline">{truncateAddress(address)}</pre>
+              Address: <Label className="inline">{truncateAddress(address)}</Label>
             </div>
           )}
 
           {chainId && (
             <div className="my-2 text-xs">
-              Chain ID: <pre className="inline">{chainId}</pre>
+              Chain ID: <Label className="inline">{chainId}</Label>
             </div>
           )}
 
@@ -652,19 +653,19 @@ function SignIn() {
       {session &&
         <div className="my-2 p-2 text-xs overflow-x-scroll bg-gray-100 rounded-lg font-mono">
           <div className="font-semibold text-gray-500 mb-1">Session</div>
-          <div className="whitespace-pre">{JSON.stringify(session, null, 2)}</div>
+          <div className="whitespace-Label">{JSON.stringify(session, null, 2)}</div>
         </div>
       }
       {signInFailure && !signingIn && (
         <div className="my-2 p-2 text-xs overflow-x-scroll bg-gray-100 rounded-lg font-mono">
           <div className="font-semibold text-gray-500 mb-1">SIWF Result</div>
-          <div className="whitespace-pre">{signInFailure}</div>
+          <div className="whitespace-Label">{signInFailure}</div>
         </div>
       )}
       {signInResult && !signingIn && (
         <div className="my-2 p-2 text-xs overflow-x-scroll bg-gray-100 rounded-lg font-mono">
           <div className="font-semibold text-gray-500 mb-1">SIWF Result</div>
-          <div className="whitespace-pre">{JSON.stringify(signInResult, null, 2)}</div>
+          <div className="whitespace-Label">{JSON.stringify(signInResult, null, 2)}</div>
         </div>
       )}
     </>
