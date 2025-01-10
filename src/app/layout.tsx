@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Metadata } from "next";
 import { getSession } from "~/auth";
 import { PROJECT_TITLE, PROJECT_DESCRIPTION } from "~/lib/constants";
