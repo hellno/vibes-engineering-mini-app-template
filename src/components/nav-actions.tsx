@@ -2,7 +2,8 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from "react";
-import { Home, Link, MoreHorizontal, Settings2, Trash } from "lucide-react";
+import { Home, Link, MoreHorizontal, Settings2, Trash, X } from "lucide-react";
+import sdk from "@farcaster/frame-sdk";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -34,17 +35,13 @@ const data = [
       href: "/admin",
     },
   ],
-  // [
-  //   {
-  //     label: "Copy Link",
-  //     icon: Link,
-  //   },
-  //   {
-  //   {
-  //     label: "Move to Trash",
-  //     icon: Trash,
-  //   },
-  // ],
+  [
+    {
+      label: "Close Frame",
+      icon: X,
+      action: () => sdk.actions.close(),
+    },
+  ],
 ];
 
 export function NavActions() {
@@ -76,7 +73,14 @@ export function NavActions() {
                       {group.map((item, index) => (
                         <SidebarMenuItem key={index}>
                           <SidebarMenuButton
-                            onClick={() => router.push(item.href)}
+                            onClick={() => {
+                              if (item.href) {
+                                router.push(item.href);
+                              } else if (item.action) {
+                                item.action();
+                              }
+                              setIsOpen(false);
+                            }}
                           >
                             <item.icon /> <span>{item.label}</span>
                           </SidebarMenuButton>
