@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Home, Link, MoreHorizontal, Settings2, Trash, X } from "lucide-react";
+import { Home, MoreHorizontal, Settings2, X } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import sdk from "@farcaster/frame-sdk";
 
