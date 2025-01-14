@@ -46,7 +46,6 @@ export default function Frame(
   const [lastEvent, setLastEvent] = useState("");
 
   const [addFrameResult, setAddFrameResult] = useState("");
-  const [sendNotificationResult, setSendNotificationResult] = useState("");
 
   useEffect(() => {
     setNotificationDetails(context?.client.notificationDetails ?? null);
@@ -181,37 +180,6 @@ export default function Frame(
     }
   }, []);
 
-  const sendNotification = useCallback(async () => {
-    setSendNotificationResult("");
-    if (!notificationDetails || !context) {
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/send-notification", {
-        method: "POST",
-        mode: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fid: context.user.fid,
-          notificationDetails,
-        }),
-      });
-
-      if (response.status === 200) {
-        setSendNotificationResult("Success");
-        return;
-      } else if (response.status === 429) {
-        setSendNotificationResult("Rate limited");
-        return;
-      }
-
-      const data = await response.text();
-      setSendNotificationResult(`Error: ${data}`);
-    } catch (error) {
-      setSendNotificationResult(`Error: ${error}`);
-    }
-  }, [context, notificationDetails]);
 
   const signTyped = useCallback(() => {
     signTypedData({
@@ -363,19 +331,6 @@ export default function Frame(
             </PurpleButton>
           </div>
 
-          {sendNotificationResult && (
-            <div className="mb-2 text-sm">
-              Send notification result: {sendNotificationResult}
-            </div>
-          )}
-          <div className="mb-4">
-            <PurpleButton
-              onClick={sendNotification}
-              disabled={!notificationDetails}
-            >
-              Send notification
-            </PurpleButton>
-          </div>
         </div>
 
         <div>
