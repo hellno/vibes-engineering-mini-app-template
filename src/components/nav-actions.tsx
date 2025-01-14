@@ -1,8 +1,8 @@
 "use client";
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from "react";
 import { Home, Link, MoreHorizontal, Settings2, Trash, X } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import sdk from "@farcaster/frame-sdk";
 
 import { Button } from "~/components/ui/button";
@@ -22,7 +22,21 @@ import {
 } from "~/components/ui/sidebar";
 import { useRouter } from "next/navigation";
 
-const data = [
+type NavItem = {
+  label: string;
+  icon: LucideIcon;
+} & (
+  | {
+      href: string;
+      action?: never;
+    }
+  | {
+      href?: never;
+      action: () => void;
+    }
+);
+
+const data: NavItem[][] = [
   [
     {
       label: "Home",
