@@ -28,7 +28,6 @@ export default function Frame(
 
   const [addFrameResult, setAddFrameResult] = useState("");
 
-  // AI! once the sdk is loaded, ask the user add the frame by calling the addFrame function
   useEffect(() => {
     const load = async () => {
       const context = await sdk.context;
@@ -38,6 +37,11 @@ export default function Frame(
 
       setContext(context);
       setAdded(context.client.added);
+
+      // If frame isn't already added, prompt user to add it
+      if (!context.client.added) {
+        addFrame();
+      }
 
       sdk.on("frameAdded", ({ notificationDetails }) => {
         setLastEvent(
