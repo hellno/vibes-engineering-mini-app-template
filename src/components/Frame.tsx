@@ -24,9 +24,23 @@ export default function Frame(
 
   const [added, setAdded] = useState(false);
 
-  const [lastEvent, setLastEvent] = useState("");
-
   const [addFrameResult, setAddFrameResult] = useState("");
+
+  const addFrame = useCallback(async () => {
+    try {
+      await sdk.actions.addFrame();
+    } catch (error) {
+      if (error instanceof AddFrame.RejectedByUser) {
+        setAddFrameResult(`Not added: ${error.message}`);
+      }
+
+      if (error instanceof AddFrame.InvalidDomainManifest) {
+        setAddFrameResult(`Not added: ${error.message}`);
+      }
+
+      setAddFrameResult(`Error: ${error}`);
+    }
+  }, []);
 
   useEffect(() => {
     const load = async () => {
@@ -44,27 +58,23 @@ export default function Frame(
       }
 
       sdk.on("frameAdded", ({ notificationDetails }) => {
-        setLastEvent(
-          `frameAdded${!!notificationDetails ? ", notifications enabled" : ""}`
-        );
-
         setAdded(true);
       });
 
       sdk.on("frameAddRejected", ({ reason }) => {
-        setLastEvent(`frameAddRejected, reason ${reason}`);
+        console.log("frameAddRejected", reason);
       });
 
       sdk.on("frameRemoved", () => {
-        setLastEvent("frameRemoved");
+        console.log("frameRemoved");
         setAdded(false);
       });
 
       sdk.on("notificationsEnabled", ({ notificationDetails }) => {
-        setLastEvent("notificationsEnabled");
+        console.log("notificationsEnabled", notificationDetails);
       });
       sdk.on("notificationsDisabled", () => {
-        setLastEvent("notificationsDisabled");
+        console.log("notificationsDisabled");
       });
 
       sdk.on("primaryButtonClicked", () => {
@@ -91,23 +101,7 @@ export default function Frame(
         sdk.removeAllListeners();
       };
     }
-  }, [isSDKLoaded]);
-
-  const addFrame = useCallback(async () => {
-    try {
-      await sdk.actions.addFrame();
-    } catch (error) {
-      if (error instanceof AddFrame.RejectedByUser) {
-        setAddFrameResult(`Not added: ${error.message}`);
-      }
-
-      if (error instanceof AddFrame.InvalidDomainManifest) {
-        setAddFrameResult(`Not added: ${error.message}`);
-      }
-
-      setAddFrameResult(`Error: ${error}`);
-    }
-  }, []);
+  }, [isSDKLoaded, addFrame]);
 
   if (!isSDKLoaded) {
     return <div>Loading...</div>;
