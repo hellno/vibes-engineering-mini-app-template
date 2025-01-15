@@ -1,24 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useEffect, useCallback, useState } from "react";
 import sdk, {
   AddFrame,
-  FrameNotificationDetails,
   SignIn as SignInCore,
   type Context,
 } from "@farcaster/frame-sdk";
-import {
-  useAccount,
-  useSendTransaction,
-  useSignMessage,
-  useSignTypedData,
-  useWaitForTransactionReceipt,
-  useDisconnect,
-  useConnect,
-  useSwitchChain,
-  useChainId,
-} from "wagmi";
 
 import { config } from "~/components/providers/WagmiProvider";
 import { PurpleButton } from "~/components/ui/PurpleButton";
@@ -34,8 +21,6 @@ export default function Frame(
 ) {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [context, setContext] = useState<Context.FrameContext>();
-  const [isContextOpen, setIsContextOpen] = useState(false);
-  const [txHash, setTxHash] = useState<string | null>(null);
 
   const [added, setAdded] = useState(false);
 
@@ -43,42 +28,7 @@ export default function Frame(
 
   const [addFrameResult, setAddFrameResult] = useState("");
 
-  const { address, isConnected } = useAccount();
-  const chainId = useChainId();
-
-  const {
-    sendTransaction,
-    error: sendTxError,
-    isError: isSendTxError,
-    isPending: isSendTxPending,
-  } = useSendTransaction();
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransactionReceipt({
-      hash: txHash as `0x${string}`,
-    });
-
-  const {
-    signTypedData,
-    error: signTypedError,
-    isError: isSignTypedError,
-    isPending: isSignTypedPending,
-  } = useSignTypedData();
-
-  const { disconnect } = useDisconnect();
-  const { connect } = useConnect();
-
-  const {
-    switchChain,
-    error: switchChainError,
-    isError: isSwitchChainError,
-    isPending: isSwitchChainPending,
-  } = useSwitchChain();
-
-  const handleSwitchChain = useCallback(() => {
-    switchChain({ chainId: chainId === base.id ? optimism.id : base.id });
-  }, [switchChain, chainId]);
-
+  // AI! once the sdk is loaded, ask the user add the frame by calling the addFrame function
   useEffect(() => {
     const load = async () => {
       const context = await sdk.context;
@@ -141,13 +91,7 @@ export default function Frame(
 
   const addFrame = useCallback(async () => {
     try {
-      const result = await sdk.actions.addFrame();
-
-      setAddFrameResult(
-        result.notificationDetails
-          ? `Added, got notificaton token ${result.notificationDetails.token} and url ${result.notificationDetails.url}`
-          : "Added, got no notification details"
-      );
+      await sdk.actions.addFrame();
     } catch (error) {
       if (error instanceof AddFrame.RejectedByUser) {
         setAddFrameResult(`Not added: ${error.message}`);
