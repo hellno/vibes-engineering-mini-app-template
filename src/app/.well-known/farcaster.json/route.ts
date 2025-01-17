@@ -13,7 +13,7 @@ export async function GET() {
     },
     frame: {
       version: "1",
-      name: {PROJECT_TITLE},
+      name: PROJECT_TITLE,
       iconUrl: `${appUrl}/icon.png`,
       homeUrl: appUrl,
       imageUrl: `${appUrl}/frames/hello/opengraph-image`,
