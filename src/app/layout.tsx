@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Metadata } from "next";
 import { getSession } from "~/auth";
+import { ThemeProvider } from "~/components/theme-provider";
+import { ThemeToggle } from "~/components/ui/theme-toggle";
 import { PROJECT_TITLE, PROJECT_DESCRIPTION } from "~/lib/constants";
 import "~/app/globals.css";
 import { Providers } from "~/app/providers";
@@ -32,9 +34,15 @@ export default async function RootLayout({
   const session = await getSession();
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        <Providers session={session}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Providers session={session}>
           <SidebarProvider>
             {/* <AppSidebar /> */}
             <SidebarInset>
@@ -54,7 +62,8 @@ export default async function RootLayout({
                     </BreadcrumbList>
                   </Breadcrumb>
                 </div>
-                <div className="ml-auto px-3">
+                <div className="ml-auto px-3 flex items-center gap-2">
+                  <ThemeToggle />
                   <NavActions />
                 </div>
               </header>
@@ -67,6 +76,7 @@ export default async function RootLayout({
             </SidebarInset>
           </SidebarProvider>
         </Providers>
+      </ThemeProvider>
       </body>
     </html>
   );
