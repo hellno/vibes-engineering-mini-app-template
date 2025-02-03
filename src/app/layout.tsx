@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Metadata } from "next";
 import { getSession } from "~/auth";
-import { ThemeProvider } from "~/components/theme-provider";
+import { ThemeProvider } from "~/components/providers/theme-provider";
 import { ThemeToggle } from "~/components/ui/theme-toggle";
 import { PROJECT_TITLE, PROJECT_DESCRIPTION } from "~/lib/constants";
 import "~/app/globals.css";

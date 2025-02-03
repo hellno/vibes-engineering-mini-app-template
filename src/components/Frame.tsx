@@ -6,10 +6,15 @@ import sdk, {
   SignIn as SignInCore,
   type Context,
 } from "@farcaster/frame-sdk";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "~/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "~/components/ui/card";
 
 import { config } from "~/components/providers/WagmiProvider";
-import { PurpleButton } from "~/components/ui/PurpleButton";
 import { truncateAddress } from "~/lib/truncateAddress";
 import { base, optimism } from "wagmi/chains";
 import { useSession } from "next-auth/react";
@@ -19,17 +24,15 @@ import { PROJECT_TITLE } from "~/lib/constants";
 
 function ExampleCard() {
   return (
-    <Card className="border-neutral-200 bg-white">
+    <Card>
       <CardHeader>
-        <CardTitle className="text-neutral-900">Welcome to the Frame Template</CardTitle>
-        <CardDescription className="text-neutral-600">
+        <CardTitle>Welcome to the Frame Template</CardTitle>
+        <CardDescription>
           This is an example card that you can customize or remove
         </CardDescription>
       </CardHeader>
-      <CardContent className="text-neutral-800">
-        <p>
-          Your frame content goes here. The text is intentionally dark to ensure good readability.
-        </p>
+      <CardContent>
+        <Label>Place content in a Card here.</Label>
       </CardContent>
     </Card>
   );
@@ -136,7 +139,9 @@ export default function Frame(
       }}
     >
       <div className="w-[300px] mx-auto py-2 px-2">
-        <h1 className="text-2xl font-bold text-center mb-4 text-neutral-900">{title}</h1>
+        <h1 className="text-2xl font-bold text-center mb-4 text-neutral-900">
+          {title}
+        </h1>
         <ExampleCard />
       </div>
     </div>
