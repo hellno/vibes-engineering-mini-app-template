@@ -7,8 +7,12 @@ export const alt = PROJECT_TITLE;
 export const contentType = "image/png";
 
 // Load fonts at module level
-const regularFont = readFileSync(join(process.cwd(), 'public/fonts/Nunito-Regular.ttf'));
-const semiBoldFont = readFileSync(join(process.cwd(), 'public/fonts/Nunito-SemiBold.ttf'));
+const regularFont = readFileSync(
+  join(process.cwd(), "public/fonts/Nunito-Regular.ttf")
+);
+const semiBoldFont = readFileSync(
+  join(process.cwd(), "public/fonts/Nunito-SemiBold.ttf")
+);
 
 // Create reusable options object
 const imageOptions = {
@@ -22,23 +26,22 @@ const imageOptions = {
       style: "normal",
     },
     {
-      name: "Nunito", 
+      name: "Nunito",
       data: semiBoldFont,
       weight: 600,
       style: "normal",
-    }
-  ]
+    },
+  ],
 };
 
 export default async function Image() {
-
   const BACKGROUND_GRADIENT_START = "#c026d3";
   const BACKGROUND_GRADIENT_END = "#ef4444";
   const BACKGROUND_GRADIENT_STYLE = {
     backgroundImage: `linear-gradient(to bottom, ${BACKGROUND_GRADIENT_START}, ${BACKGROUND_GRADIENT_END})`,
     color: "white",
   };
-/*
+  /*
 this Image is rendered using vercel/satori.
 
 Satori supports a limited subset of HTML and CSS features, due to its special use cases. In general, only these static and visible elements and properties that are implemented.
@@ -56,6 +59,7 @@ Please refer to Satori’s documentation for a list of supported HTML and CSS fe
         <h3 tw="text-4xl font-normal">{PROJECT_DESCRIPTION}</h3>
       </div>
     ),
+    // @ts-expect-error - number is not assignable to number ¯\_(ツ)_/¯
     imageOptions
   );
 }
