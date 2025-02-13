@@ -6,41 +6,89 @@ import { join } from "path";
 export const alt = PROJECT_TITLE;
 export const contentType = "image/png";
 
-// Load fonts at module level
-const regularFont = readFileSync(
-  join(process.cwd(), "public/fonts/Nunito-Regular.ttf")
-);
-const semiBoldFont = readFileSync(
-  join(process.cwd(), "public/fonts/Nunito-SemiBold.ttf")
-);
+// Debug logging function
+function debugLog(message: string, ...args: any[]) {
+  console.log(`[OG Image Debug] ${message}`, ...args);
+}
+
+// Function to load font with error handling
+async function loadFont(fontPath: string): Promise<Buffer> {
+  try {
+    debugLog(`Attempting to load font from: ${fontPath}`);
+    debugLog(`Current working directory: ${process.cwd()}`);
+    
+    // Try to load font synchronously
+    const fontData = readFileSync(fontPath);
+    debugLog(`Successfully loaded font: ${fontPath}`);
+    return fontData;
+  } catch (error) {
+    debugLog(`Error loading font ${fontPath}:`, error);
+    
+    // Fallback to loading from absolute path
+    try {
+      const absolutePath = join(__dirname, '..', '..', 'public', 'fonts', fontPath.split('/').pop()!);
+      debugLog(`Trying absolute path: ${absolutePath}`);
+      return readFileSync(absolutePath);
+    } catch (fallbackError) {
+      debugLog(`Fallback also failed:`, fallbackError);
+      throw new Error(`Failed to load font ${fontPath}: ${error}`);
+    }
+  }
+}
 
 // Create reusable options object
-const imageOptions = {
-  width: 1200,
-  height: 800,
-  fonts: [
-    {
-      name: "Nunito",
-      data: regularFont,
-      weight: 400,
-      style: "normal",
-    },
-    {
-      name: "Nunito",
-      data: semiBoldFont,
-      weight: 600,
-      style: "normal",
-    },
-  ],
-};
+let imageOptions: any = null;
+
+// Initialize fonts
+async function initializeFonts() {
+  if (imageOptions) return imageOptions;
+
+  debugLog('Initializing fonts...');
+  
+  try {
+    const regularFont = await loadFont(join(process.cwd(), 'public/fonts/Nunito-Regular.ttf'));
+    const semiBoldFont = await loadFont(join(process.cwd(), 'public/fonts/Nunito-SemiBold.ttf'));
+
+    imageOptions = {
+      width: 1200,
+      height: 800,
+      fonts: [
+        {
+          name: "Nunito",
+          data: regularFont,
+          weight: 400,
+          style: "normal",
+        },
+        {
+          name: "Nunito",
+          data: semiBoldFont,
+          weight: 600,
+          style: "normal",
+        },
+      ],
+    };
+
+    debugLog('Fonts initialized successfully');
+    return imageOptions;
+  } catch (error) {
+    debugLog('Font initialization failed:', error);
+    throw error;
+  }
+}
 
 export default async function Image() {
+  debugLog('Starting OG image generation');
+  
+  const options = await initializeFonts();
+  
   const BACKGROUND_GRADIENT_START = "#c026d3";
   const BACKGROUND_GRADIENT_END = "#ef4444";
   const BACKGROUND_GRADIENT_STYLE = {
     backgroundImage: `linear-gradient(to bottom, ${BACKGROUND_GRADIENT_START}, ${BACKGROUND_GRADIENT_END})`,
     color: "white",
   };
+
+  debugLog('Generating image response');
   /*
 this Image is rendered using vercel/satori.
 
@@ -60,6 +108,6 @@ Please refer to Satori’s documentation for a list of supported HTML and CSS fe
       </div>
     ),
     // @ts-expect-error - number is not assignable to number ¯\_(ツ)_/¯
-    imageOptions
+    options
   );
 }
