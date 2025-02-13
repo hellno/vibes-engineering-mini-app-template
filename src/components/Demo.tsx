@@ -22,9 +22,10 @@ import {
 } from "wagmi";
 
 import { config } from "~/components/providers/WagmiProvider";
+import { Button } from "~/components/ui/Button";
 import { PurpleButton } from "~/components/ui/PurpleButton";
 import { truncateAddress } from "~/lib/truncateAddress";
-import { base, optimism } from "wagmi/chains";
+import { base, degen, mainnet, optimism } from "wagmi/chains";
 import { BaseError, UserRejectedRequestError } from "viem";
 import { useSession } from "next-auth/react"
 import { createStore } from 'mipd'
@@ -85,8 +86,20 @@ export default function Frame(
     isPending: isSwitchChainPending,
   } = useSwitchChain();
 
+  const nextChain = useMemo(() => {
+    if (chainId === base.id) {
+      return optimism;
+    } else if (chainId === optimism.id) {
+      return degen;
+    } else if (chainId === degen.id) {
+      return mainnet;
+    } else {
+      return base;
+    }
+  }, [chainId]);
+
   const handleSwitchChain = useCallback(() => {
-    switchChain({ chainId: chainId === base.id ? optimism.id : base.id });
+    switchChain({ chainId: nextChain.id });
   }, [switchChain, chainId]);
 
   useEffect(() => {
@@ -470,13 +483,13 @@ store.subscribe(providerDetails => {
                 {isSignTypedError && renderError(signTypedError)}
               </div>
               <div className="mb-4">
-                <PurpleButton
+                <Button
                   onClick={handleSwitchChain}
                   disabled={isSwitchChainPending}
                   isLoading={isSwitchChainPending}
                 >
-                  Switch to {chainId === base.id ? "Optimism" : "Base"}
-                </PurpleButton>
+                  Switch to {nextChain.name}
+                </Button>
                 {isSwitchChainError && renderError(switchChainError)}
               </div>
             </>
