@@ -1,44 +1,43 @@
 import { ImageResponse } from "next/og";
 import { PROJECT_TITLE, PROJECT_DESCRIPTION } from "~/lib/constants";
-import fs from "fs";
+import { readFileSync } from "fs";
+import { join } from "path";
 
 export const alt = PROJECT_TITLE;
-
 export const contentType = "image/png";
 
-const loadFont = async (filename: string) => {
-  const font = await fs.promises.readFile(`public/fonts/${filename}`);
-  return font;
-};
+// Load fonts at module level
+const regularFont = readFileSync(join(process.cwd(), 'public/fonts/Nunito-Regular.ttf'));
+const semiBoldFont = readFileSync(join(process.cwd(), 'public/fonts/Nunito-SemiBold.ttf'));
 
-const fontRegular = await loadFont("Nunito-Regular.ttf");
-const fontSemiBold = await loadFont("Nunito-SemiBold.ttf");
-
-const options = {
+// Create reusable options object
+const imageOptions = {
   width: 1200,
   height: 800,
   fonts: [
     {
       name: "Nunito",
-      data: fontRegular,
+      data: regularFont,
       weight: 400,
       style: "normal",
     },
     {
-      name: "Nunito",
-      data: fontSemiBold,
+      name: "Nunito", 
+      data: semiBoldFont,
       weight: 600,
       style: "normal",
-    },
-  ],
+    }
+  ]
 };
 
-const BACKGROUND_GRADIENT_START = "#c026d3";
-const BACKGROUND_GRADIENT_END = "#ef4444";
-const BACKGROUND_GRADIENT_STYLE = {
-  backgroundImage: `linear-gradient(to bottom, ${BACKGROUND_GRADIENT_START}, ${BACKGROUND_GRADIENT_END})`,
-  color: "white",
-};
+export default async function Image() {
+
+  const BACKGROUND_GRADIENT_START = "#c026d3";
+  const BACKGROUND_GRADIENT_END = "#ef4444";
+  const BACKGROUND_GRADIENT_STYLE = {
+    backgroundImage: `linear-gradient(to bottom, ${BACKGROUND_GRADIENT_START}, ${BACKGROUND_GRADIENT_END})`,
+    color: "white",
+  };
 /*
 this Image is rendered using vercel/satori.
 
@@ -47,7 +46,6 @@ For example, the <input> HTML element, the cursor CSS property are not in consid
 Also, Satori does not guarantee that the SVG will 100% match the browser-rendered HTML output since Satori implements its own layout engine based on the SVG 1.1 spec.
 Please refer to Satori’s documentation for a list of supported HTML and CSS features. https://github.com/vercel/satori#css
 */
-export default async function Image() {
   return new ImageResponse(
     (
       <div
@@ -58,7 +56,6 @@ export default async function Image() {
         <h3 tw="text-4xl font-normal">{PROJECT_DESCRIPTION}</h3>
       </div>
     ),
-    // @ts-expect-error - ignore weight as number type mismatch
-    options
+    imageOptions
   );
 }
