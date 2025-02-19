@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useCallback, useState, useMemo } from "react";
-import { Input } from "./ui/input"
+import { Input } from "./ui/input";
 import { signIn, signOut, getCsrfToken } from "next-auth/react";
 import sdk, {
-    AddFrame,
+  AddFrame,
   FrameNotificationDetails,
   SignIn as SignInCore,
   type Context,
@@ -27,11 +27,10 @@ import { PurpleButton } from "~/components/ui/PurpleButton";
 import { truncateAddress } from "~/lib/truncateAddress";
 import { base, degen, mainnet, optimism } from "wagmi/chains";
 import { BaseError, UserRejectedRequestError } from "viem";
-import { useSession } from "next-auth/react"
-import { createStore } from 'mipd'
+import { useSession } from "next-auth/react";
+import { createStore } from "mipd";
 import { Label } from "~/components/ui/label";
 import { PROJECT_TITLE } from "~/lib/constants";
-
 
 export default function Frame(
   { title }: { title?: string } = { title: PROJECT_TITLE }
@@ -100,7 +99,7 @@ export default function Frame(
 
   const handleSwitchChain = useCallback(() => {
     switchChain({ chainId: nextChain.id });
-  }, [switchChain, chainId]);
+  }, [switchChain, nextChain]);
 
   useEffect(() => {
     const load = async () => {
@@ -149,15 +148,14 @@ export default function Frame(
       console.log("Calling ready");
       sdk.actions.ready({});
 
-// Set up a MIPD Store, and request Providers.
-const store = createStore()
+      // Set up a MIPD Store, and request Providers.
+      const store = createStore();
 
-// Subscribe to the MIPD Store.
-store.subscribe(providerDetails => {
-  console.log("PROVIDER DETAILS", providerDetails)
-  // => [EIP6963ProviderDetail, EIP6963ProviderDetail, ...]
-})
-
+      // Subscribe to the MIPD Store.
+      store.subscribe((providerDetails) => {
+        console.log("PROVIDER DETAILS", providerDetails);
+        // => [EIP6963ProviderDetail, EIP6963ProviderDetail, ...]
+      });
     };
     if (sdk && !isSDKLoaded) {
       console.log("Calling load");
@@ -199,7 +197,7 @@ store.subscribe(providerDetails => {
       if (error instanceof AddFrame.RejectedByUser) {
         setAddFrameResult(`Not added: ${error.message}`);
       }
-      
+
       if (error instanceof AddFrame.InvalidDomainManifest) {
         setAddFrameResult(`Not added: ${error.message}`);
       }
@@ -281,12 +279,14 @@ store.subscribe(providerDetails => {
   }
 
   return (
-    <div style={{ 
-      paddingTop: context?.client.safeAreaInsets?.top ?? 0, 
-      paddingBottom: context?.client.safeAreaInsets?.bottom ?? 0,
-      paddingLeft: context?.client.safeAreaInsets?.left ?? 0,
-      paddingRight: context?.client.safeAreaInsets?.right ?? 0 ,
-    }}>
+    <div
+      style={{
+        paddingTop: context?.client.safeAreaInsets?.top ?? 0,
+        paddingBottom: context?.client.safeAreaInsets?.bottom ?? 0,
+        paddingLeft: context?.client.safeAreaInsets?.left ?? 0,
+        paddingRight: context?.client.safeAreaInsets?.right ?? 0,
+      }}
+    >
       <div className="w-[300px] mx-auto py-2 px-2">
         <h1 className="text-2xl font-bold text-center mb-4">{title}</h1>
 
@@ -342,7 +342,9 @@ store.subscribe(providerDetails => {
                 sdk.actions.openUrl
               </Label>
             </div>
-            <PurpleButton onClick={openWarpcastUrl}>Open Warpcast Link</PurpleButton>
+            <PurpleButton onClick={openWarpcastUrl}>
+              Open Warpcast Link
+            </PurpleButton>
           </div>
 
           <div className="mb-4">
@@ -407,7 +409,10 @@ store.subscribe(providerDetails => {
             </div>
           )}
           <div className="mb-4">
-            <PurpleButton onClick={sendNotification} disabled={!notificationDetails}>
+            <PurpleButton
+              onClick={sendNotification}
+              disabled={!notificationDetails}
+            >
               Send notification
             </PurpleButton>
           </div>
@@ -418,7 +423,8 @@ store.subscribe(providerDetails => {
 
           {address && (
             <div className="my-2 text-xs">
-              Address: <Label className="inline">{truncateAddress(address)}</Label>
+              Address:{" "}
+              <Label className="inline">{truncateAddress(address)}</Label>
             </div>
           )}
 
@@ -602,7 +608,7 @@ function SignIn() {
   const [signingOut, setSigningOut] = useState(false);
   const [signInResult, setSignInResult] = useState<SignInCore.SignInResult>();
   const [signInFailure, setSignInFailure] = useState<string>();
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession();
 
   const getNonce = useCallback(async () => {
     const nonce = await getCsrfToken();
@@ -638,7 +644,7 @@ function SignIn() {
   const handleSignOut = useCallback(async () => {
     try {
       setSigningOut(true);
-      await signOut({ redirect: false }) 
+      await signOut({ redirect: false });
       setSignInResult(undefined);
     } finally {
       setSigningOut(false);
@@ -647,28 +653,24 @@ function SignIn() {
 
   return (
     <>
-      {status !== "authenticated" &&
-        <PurpleButton
-          onClick={handleSignIn}
-          disabled={signingIn}
-        >
+      {status !== "authenticated" && (
+        <PurpleButton onClick={handleSignIn} disabled={signingIn}>
           Sign In with Farcaster
         </PurpleButton>
-      }
-      {status === "authenticated" &&
-        <PurpleButton
-          onClick={handleSignOut}
-          disabled={signingOut}
-        >
+      )}
+      {status === "authenticated" && (
+        <PurpleButton onClick={handleSignOut} disabled={signingOut}>
           Sign out
         </PurpleButton>
-      }
-      {session &&
+      )}
+      {session && (
         <div className="my-2 p-2 text-xs overflow-x-scroll bg-gray-100 rounded-lg font-mono">
           <div className="font-semibold text-gray-500 mb-1">Session</div>
-          <div className="whitespace-Label">{JSON.stringify(session, null, 2)}</div>
+          <div className="whitespace-Label">
+            {JSON.stringify(session, null, 2)}
+          </div>
         </div>
-      }
+      )}
       {signInFailure && !signingIn && (
         <div className="my-2 p-2 text-xs overflow-x-scroll bg-gray-100 rounded-lg font-mono">
           <div className="font-semibold text-gray-500 mb-1">SIWF Result</div>
@@ -678,7 +680,9 @@ function SignIn() {
       {signInResult && !signingIn && (
         <div className="my-2 p-2 text-xs overflow-x-scroll bg-gray-100 rounded-lg font-mono">
           <div className="font-semibold text-gray-500 mb-1">SIWF Result</div>
-          <div className="whitespace-Label">{JSON.stringify(signInResult, null, 2)}</div>
+          <div className="whitespace-Label">
+            {JSON.stringify(signInResult, null, 2)}
+          </div>
         </div>
       )}
     </>
@@ -686,26 +690,33 @@ function SignIn() {
 }
 
 function ViewProfile() {
-  const [fid, setFid] = useState('3');
+  const [fid, setFid] = useState("3");
 
   return (
     <>
       <div>
-        <Label className="text-xs font-semibold text-gray-500 mb-1" htmlFor="view-profile-fid">Fid</Label>
+        <Label
+          className="text-xs font-semibold text-gray-500 mb-1"
+          htmlFor="view-profile-fid"
+        >
+          Fid
+        </Label>
         <Input
           id="view-profile-fid"
           type="number"
           value={fid}
           className="mb-2"
-          onChange={(e) => { 
-            setFid(e.target.value)
+          onChange={(e) => {
+            setFid(e.target.value);
           }}
           step="1"
           min="1"
         />
       </div>
       <PurpleButton
-        onClick={() => { sdk.actions.viewProfile({ fid: parseInt(fid) }) }}
+        onClick={() => {
+          sdk.actions.viewProfile({ fid: parseInt(fid) });
+        }}
       >
         View Profile
       </PurpleButton>
