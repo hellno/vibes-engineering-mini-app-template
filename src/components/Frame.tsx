@@ -137,9 +137,6 @@ export default function Frame() {
       }}
     >
       <div className="w-[300px] mx-auto py-2 px-2">
-        <h1 className="text-2xl font-bold text-center mb-4 text-gray-700 dark:text-gray-300">
-          {PROJECT_TITLE}
-        </h1>
         <ExampleCard />
       </div>
     </div>
