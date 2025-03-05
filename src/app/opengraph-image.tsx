@@ -6,24 +6,12 @@ import { join } from "path";
 export const alt = PROJECT_TITLE;
 export const contentType = "image/png";
 
-// Debug logging function
-function debugLog(message: string, ...args: any[]) {
-  console.log(`[OG Image Debug] ${message}`, ...args);
-}
-
 // Function to load font with error handling
 async function loadFont(fontPath: string): Promise<Buffer> {
   try {
-    debugLog(`Attempting to load font from: ${fontPath}`);
-    debugLog(`Current working directory: ${process.cwd()}`);
-
-    // Try to load font synchronously
     const fontData = readFileSync(fontPath);
-    debugLog(`Successfully loaded font: ${fontPath}`);
     return fontData;
   } catch (error) {
-    debugLog(`Error loading font ${fontPath}:`, error);
-
     // Fallback to loading from absolute path
     try {
       const absolutePath = join(
@@ -34,10 +22,8 @@ async function loadFont(fontPath: string): Promise<Buffer> {
         "fonts",
         fontPath.split("/").pop()!
       );
-      debugLog(`Trying absolute path: ${absolutePath}`);
       return readFileSync(absolutePath);
     } catch (fallbackError) {
-      debugLog(`Fallback also failed:`, fallbackError);
       throw new Error(`Failed to load font ${fontPath}: ${error}`);
     }
   }
@@ -49,8 +35,6 @@ let imageOptions: any = null;
 // Initialize fonts
 async function initializeFonts() {
   if (imageOptions) return imageOptions;
-
-  debugLog("Initializing fonts...");
 
   try {
     const regularFont = await loadFont(
@@ -79,17 +63,13 @@ async function initializeFonts() {
       ],
     };
 
-    debugLog("Fonts initialized successfully");
     return imageOptions;
   } catch (error) {
-    debugLog("Font initialization failed:", error);
     throw error;
   }
 }
 
 export default async function Image() {
-  debugLog("Starting OG image generation");
-
   const options = await initializeFonts();
 
   const BACKGROUND_GRADIENT_START = "#c026d3";
@@ -99,7 +79,6 @@ export default async function Image() {
     color: "white",
   };
 
-  debugLog("Generating image response");
   /*
 this Image is rendered using vercel/satori.
 

@@ -26,6 +26,7 @@ export const revalidate = 300;
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: PROJECT_TITLE,
+    metadataBase: new URL(appUrl),
     openGraph: {
       title: PROJECT_TITLE,
       description: PROJECT_DESCRIPTION,

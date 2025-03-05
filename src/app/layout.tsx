@@ -21,9 +21,20 @@ import {
   SidebarTrigger,
 } from "~/components/ui/sidebar";
 
+const appUrl =
+  process.env.NEXT_PUBLIC_URL ||
+  `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+
 export const metadata: Metadata = {
   title: PROJECT_TITLE,
   description: PROJECT_DESCRIPTION,
+  metadataBase: new URL(appUrl),
+  alternates: {
+    canonical: "/",
+    languages: {
+      "en-US": "/en-US",
+    },
+  },
 };
 
 export default async function RootLayout({
@@ -37,40 +48,40 @@ export default async function RootLayout({
       <body>
         <ThemeProviderClient>
           <Providers session={session}>
-          <SidebarProvider>
-            {/* <AppSidebar /> */}
-            <SidebarInset>
-              <header className="flex h-14 shrink-0 items-center gap-2">
-                <div className="flex flex-1 items-center gap-2 px-3">
-                  {/* 
+            <SidebarProvider>
+              {/* <AppSidebar /> */}
+              <SidebarInset>
+                <header className="flex h-14 shrink-0 items-center gap-2">
+                  <div className="flex flex-1 items-center gap-2 px-3">
+                    {/* 
                     <SidebarTrigger />
                     <Separator orientation="vertical" className="mr-2 h-4" />
                   */}
-                  <Breadcrumb>
-                    <BreadcrumbList>
-                      <BreadcrumbItem>
-                        <BreadcrumbPage className="ml-2 line-clamp-1">
-                          {PROJECT_TITLE}
-                        </BreadcrumbPage>
-                      </BreadcrumbItem>
-                    </BreadcrumbList>
-                  </Breadcrumb>
-                </div>
-                <div className="ml-auto px-3 flex items-center gap-2">
-                  <ThemeToggle />
-                  <NavActions />
-                </div>
-              </header>
-              <div className="flex flex-1 flex-col gap-4 px-4 py-10">
-                {children}
-                {/* <div className="mx-auto h-24 w-full max-w-3xl rounded-xl bg-neutral-100/50 dark:bg-neutral-800/50" />
+                    <Breadcrumb>
+                      <BreadcrumbList>
+                        <BreadcrumbItem>
+                          <BreadcrumbPage className="ml-2 line-clamp-1">
+                            {PROJECT_TITLE}
+                          </BreadcrumbPage>
+                        </BreadcrumbItem>
+                      </BreadcrumbList>
+                    </Breadcrumb>
+                  </div>
+                  <div className="ml-auto px-3 flex items-center gap-2">
+                    <ThemeToggle />
+                    <NavActions />
+                  </div>
+                </header>
+                <div className="flex flex-1 flex-col gap-4 px-4 py-10">
+                  {children}
+                  {/* <div className="mx-auto h-24 w-full max-w-3xl rounded-xl bg-neutral-100/50 dark:bg-neutral-800/50" />
                 <div className="mx-auto h-full w-full max-w-3xl rounded-xl bg-neutral-100/50 dark:bg-neutral-800/50" /> 
                 */}
-              </div>
-            </SidebarInset>
-          </SidebarProvider>
-        </Providers>
-      </ThemeProviderClient>
+                </div>
+              </SidebarInset>
+            </SidebarProvider>
+          </Providers>
+        </ThemeProviderClient>
       </body>
     </html>
   );
