@@ -4,6 +4,7 @@ import {
   verifyAppKeyWithNeynar,
 } from "@farcaster/frame-node";
 import { NextRequest } from "next/server";
+import { PROJECT_TITLE } from "~/lib/constants";
 import {
   deleteUserNotificationDetails,
   setUserNotificationDetails,
@@ -25,19 +26,19 @@ export async function POST(request: NextRequest) {
         // The request data is invalid
         return Response.json(
           { success: false, error: error.message },
-          { status: 400 }
+          { status: 400 },
         );
       case "VerifyJsonFarcasterSignature.InvalidAppKeyError":
         // The app key is invalid
         return Response.json(
           { success: false, error: error.message },
-          { status: 401 }
+          { status: 401 },
         );
       case "VerifyJsonFarcasterSignature.VerifyAppKeyError":
         // Internal error verifying the app key (caller may want to try again)
         return Response.json(
           { success: false, error: error.message },
-          { status: 500 }
+          { status: 500 },
         );
     }
   }
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
         await setUserNotificationDetails(fid, event.notificationDetails);
         await sendFrameNotification({
           fid,
-          title: "Welcome to Frames v2",
+          title: `Welcome to ${PROJECT_TITLE}`,
           body: "Frame is now added to your client",
         });
       } else {
