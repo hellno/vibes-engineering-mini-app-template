@@ -2,18 +2,15 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import type { Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
-import { FrameContext } from "@farcaster/frame-node";
-import sdk from "@farcaster/frame-sdk";
+import { useFrameSDK } from "~/hooks/useFrameSDK";
 
 const WagmiProvider = dynamic(
   () => import("~/components/providers/WagmiProvider"),
   {
     ssr: false,
-  }
+  },
 );
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
@@ -39,32 +36,8 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 
   return <PHProvider client={posthog}>{children}</PHProvider>;
 }
-export function Providers({
-  session,
-  children,
-}: {
-  session: Session | null;
-  children: React.ReactNode;
-}) {
-  const [isSDKLoaded, setIsSDKLoaded] = useState(false);
-  const [context, setContext] = useState<FrameContext>();
-
-  useEffect(() => {
-    const load = async () => {
-      const frameContext = await sdk.context;
-      if (!frameContext) {
-        return;
-      }
-
-      setContext(frameContext as unknown as FrameContext);
-    };
-    if (sdk && !isSDKLoaded) {
-      load();
-      return () => {
-        sdk.removeAllListeners();
-      };
-    }
-  }, [isSDKLoaded]);
+export function Providers({ children }: { children: React.ReactNode }) {
+  const { isSDKLoaded, context } = useFrameSDK();
 
   useEffect(() => {
     if (!context?.user?.fid || !posthog?.isFeatureEnabled) return;
@@ -87,10 +60,8 @@ export function Providers({
   }, [context?.user]); // Only runs when FID changes
 
   return (
-    <SessionProvider session={session}>
-      <WagmiProvider>
-        <PostHogProvider>{children}</PostHogProvider>
-      </WagmiProvider>
-    </SessionProvider>
+    <WagmiProvider>
+      <PostHogProvider>{children}</PostHogProvider>
+    </WagmiProvider>
   );
 }
