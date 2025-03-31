@@ -1,33 +1,8 @@
 import { ImageResponse } from "next/og";
 import { PROJECT_TITLE, PROJECT_DESCRIPTION } from "~/lib/constants";
-import { readFileSync } from "fs";
-import { join } from "path";
 
 export const alt = PROJECT_TITLE;
 export const contentType = "image/png";
-
-// Function to load font with error handling
-async function loadFont(fontPath: string): Promise<Buffer> {
-  try {
-    const fontData = readFileSync(fontPath);
-    return fontData;
-  } catch (error) {
-    // Fallback to loading from absolute path
-    try {
-      const absolutePath = join(
-        __dirname,
-        "..",
-        "..",
-        "public",
-        "fonts",
-        fontPath.split("/").pop()!
-      );
-      return readFileSync(absolutePath);
-    } catch (fallbackError) {
-      throw new Error(`Failed to load font ${fontPath}: ${error}`);
-    }
-  }
-}
 
 // Create reusable options object
 let imageOptions: any = null;
@@ -37,30 +12,9 @@ async function initializeFonts() {
   if (imageOptions) return imageOptions;
 
   try {
-    const regularFont = await loadFont(
-      join(process.cwd(), "public/fonts/Nunito-Regular.ttf")
-    );
-    const semiBoldFont = await loadFont(
-      join(process.cwd(), "public/fonts/Nunito-SemiBold.ttf")
-    );
-
     imageOptions = {
       width: 1200,
       height: 800,
-      fonts: [
-        {
-          name: "Nunito",
-          data: regularFont,
-          weight: 400,
-          style: "normal",
-        },
-        {
-          name: "Nunito",
-          data: semiBoldFont,
-          weight: 600,
-          style: "normal",
-        },
-      ],
     };
 
     return imageOptions;
@@ -97,6 +51,6 @@ Please refer to Satori’s documentation for a list of supported HTML and CSS fe
         <h3 tw="text-4xl font-normal">{PROJECT_DESCRIPTION}</h3>
       </div>
     ),
-    options
+    options,
   );
 }
