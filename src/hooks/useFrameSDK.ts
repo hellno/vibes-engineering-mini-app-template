@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import sdk from "@farcaster/frame-sdk";
-import { useAccount } from "wagmi";
-import { useRouter } from "next/navigation";
 import { FrameContext, FrameNotificationDetails } from "@farcaster/frame-node";
 
 export function useFrameSDK() {
-  const router = useRouter();
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
 
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
