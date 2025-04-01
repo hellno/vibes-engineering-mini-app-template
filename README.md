@@ -1,16 +1,19 @@
 # farcaster frames template
 
-This repo contains a template for Farcaster v2 frames:  
-✅ shadcn and tailwindcss for styling
-✅ custom font in OpenGraph image
-✅ llm_docs folder for bringing context to LLMs
+this repo contains a template for Farcaster mini apps (formerly known as frames v2):  
+✅ shadcn and tailwindcss for styling  
+✅ useFrameSDK hook to easily work with Farcaster mini app environment  
+✅ llm_docs folder for bringing context to LLMs  
+
+![farcaster_frame_template_small](https://github.com/user-attachments/assets/38b9ddef-89fa-4864-9397-a70689314da7)
 
 Architecture
 
 The application is structured around the following key layers:
-• Providers Layer: Manages global state and configurations, including wallet connections and SDK setup.
-• Components Layer: Encapsulates UI elements and interactive features, such as buttons for actions and context displays.
-• Hooks and Utilities: Facilitates interactions with the Frame SDK and Wagmi, handling asynchronous operations and state management.
+
+• Providers Layer: Manages global state and configurations, including wallet connections and SDK setup.  
+• Components Layer: Encapsulates UI elements and interactive features, such as buttons for actions and context displays.  
+• Hooks and Utilities: Facilitates interactions with the Frame SDK and Wagmi, handling asynchronous operations and state management.  
 
 ## Run
 
