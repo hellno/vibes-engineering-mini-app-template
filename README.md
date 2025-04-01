@@ -11,9 +11,9 @@ Architecture
 
 The application is structured around the following key layers:
 
-• Providers Layer: Manages global state and configurations, including wallet connections and SDK setup.  
-• Components Layer: Encapsulates UI elements and interactive features, such as buttons for actions and context displays.  
-• Hooks and Utilities: Facilitates interactions with the Frame SDK and Wagmi, handling asynchronous operations and state management.  
+- Providers Layer: Manages global state and configurations, including wallet connections and SDK setup.
+- Components Layer: Encapsulates UI elements and interactive features, such as buttons for actions and context displays.
+- Hooks and Utilities: Facilitates interactions with the Frame SDK and Wagmi, handling asynchronous operations and state management.
 
 ## Run
 
