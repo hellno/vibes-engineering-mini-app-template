@@ -43,11 +43,6 @@ const data: NavItem[][] = [
       icon: Home,
       href: "/",
     },
-    {
-      label: "Admin Dashboard",
-      icon: Settings2,
-      href: "/admin",
-    },
   ],
   [
     {
