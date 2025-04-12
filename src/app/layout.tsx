@@ -27,10 +27,6 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ThemeProviderClient>
-          <Providers>
-            <SidebarProvider>
-              <SidebarInset>
                 <header className="flex h-14 shrink-0 items-center gap-2">
                   <div className="flex flex-1 items-center gap-2 px-3">
                     <span className="ml-2 line-clamp-1">{PROJECT_TITLE}</span>
@@ -43,10 +39,6 @@ export default async function RootLayout({
                 <div className="flex flex-1 flex-col gap-4 px-4 py-10">
                   {children}
                 </div>
-              </SidebarInset>
-            </SidebarProvider>
-          </Providers>
-        </ThemeProviderClient>
       </body>
     </html>
   );
