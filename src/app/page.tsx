@@ -8,7 +8,7 @@ const appUrl =
 
 const frame = {
   version: "next",
-  imageUrl: `${appUrl}/opengraph-image`,
+  imageUrl: `${appUrl}/og-image.png`,
   button: {
     title: "Translate",
     action: {
@@ -16,7 +16,7 @@ const frame = {
       name: PROJECT_TITLE,
       url: appUrl,
       splashImageUrl: `${appUrl}/splash.png`,
-      splashBackgroundColor: "#f7f7f7",
+      splashBackgroundColor: "#a1a1ff",
     },
   },
 };
