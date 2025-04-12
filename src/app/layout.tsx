@@ -32,8 +32,6 @@ export default async function RootLayout({
                     <span className="ml-2 line-clamp-1">{PROJECT_TITLE}</span>
                   </div>
                   <div className="ml-auto px-3 flex items-center gap-2">
-                    <ThemeToggle />
-                    <NavActions />
                   </div>
                 </header>
                 <div className="flex flex-1 flex-col gap-4 px-4 py-10">
