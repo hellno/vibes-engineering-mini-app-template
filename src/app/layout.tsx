@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "~/app/globals.css";
 import type { Metadata } from "next";
-import { ThemeProviderClient } from "~/components/providers/theme-provider-client";
-import { ThemeToggle } from "~/components/ui/theme-toggle";
 import { PROJECT_TITLE, PROJECT_DESCRIPTION } from "~/lib/constants";
-import { Providers } from "~/app/providers";
-import { NavActions } from "~/components/nav-actions";
-import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
 
 const appUrl =
   process.env.NEXT_PUBLIC_URL ||
