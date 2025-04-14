@@ -15,17 +15,17 @@ importers:
         specifier: ^0.6.0
         version: 0.6.0(@types/react@18.3.18)(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@5.0.10)(viem@2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2))
       '@farcaster/frame-core':
-        specifier: ^0.0.22
-        version: 0.0.22(typescript@5.8.2)
-      '@farcaster/frame-node':
-        specifier: ^0.0.7
-        version: 0.0.7(typescript@5.8.2)(zod@3.24.2)
-      '@farcaster/frame-sdk':
         specifier: ^0.0.31
-        version: 0.0.31(typescript@5.8.2)(zod@3.24.2)
+        version: 0.0.31(typescript@5.8.2)
+      '@farcaster/frame-node':
+        specifier: ^0.0.20
+        version: 0.0.20(typescript@5.8.2)
+      '@farcaster/frame-sdk':
+        specifier: ^0.0.34
+        version: 0.0.34(typescript@5.8.2)(zod@3.24.2)
       '@farcaster/frame-wagmi-connector':
-        specifier: ^0.0.19
-        version: 0.0.19(@farcaster/frame-sdk@0.0.31(typescript@5.8.2)(zod@3.24.2))(@wagmi/core@2.16.5(@tanstack/query-core@5.67.3)(@types/react@18.3.18)(react@18.3.1)(typescript@5.8.2)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)))(viem@2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2))
+        specifier: ^0.0.22
+        version: 0.0.22(@farcaster/frame-sdk@0.0.34(typescript@5.8.2)(zod@3.24.2))(@wagmi/core@2.16.5(@tanstack/query-core@5.67.3)(@types/react@18.3.18)(react@18.3.1)(typescript@5.8.2)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)))(viem@2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2))
       '@hookform/resolvers':
         specifier: ^3.10.0
         version: 3.10.0(react-hook-form@7.54.2(react@18.3.1))
@@ -303,25 +303,19 @@ packages:
       react: '>= 17'
       react-dom: '>= 17'
 
-  '@farcaster/frame-core@0.0.19':
-    resolution: {integrity: sha512-/0XjVZa/rUuUR16GVhhKnAQI33SXI61bB24jNA1DD0L0ytcKsM14wBptW9CF4RDiYIXxtt4mXmnQ+rMhO38RcA==}
+  '@farcaster/frame-core@0.0.31':
+    resolution: {integrity: sha512-sZHG4Jt9aXqzdod+WksNtIKGgSuxBxJ2i3Fx1uAzeK29L1W/Osfsp3ZCpilEOjNHB9iRTqtGH7VKp3CPf312hA==}
 
-  '@farcaster/frame-core@0.0.22':
-    resolution: {integrity: sha512-VervdgEXn3wfU+CLFsPMiLiOAXmXY4g+CPAcQ7g1771KW2SdfgLpOmHwvHvGRadfvvZxnPV84h1EwjooSvdsUA==}
+  '@farcaster/frame-node@0.0.20':
+    resolution: {integrity: sha512-Uj21h3VIKxpaHwxz+NvqngWUqD+ivFg1JgfexJuLldRhE2ZcAJu4FvMaXc++c9LZXD5KlK972NTzzooR5eSJFA==}
 
-  '@farcaster/frame-core@0.0.29':
-    resolution: {integrity: sha512-+iQjOS4OE0YCeW7hhBOg0QK8Pch7/C3mlkfD0OLey0Thnj4Uab4tWmvmfKxnsJNSYnESx9BT+Sw/pn9cueCl1Q==}
+  '@farcaster/frame-sdk@0.0.34':
+    resolution: {integrity: sha512-szPyiP3EWyX/CBskDIb4QF+X+lB4vy8mtyWwZfInBw/yXD/k73bFxAtzH88BVsTFI1220T6Erb35sJeme04tMQ==}
 
-  '@farcaster/frame-node@0.0.7':
-    resolution: {integrity: sha512-jhQI3p6gJGKm+3LknShQmC/oVRw8DHq/y2RI6PttFTTBK3OJhxbldLsqUAdIPicjUYUOnoW6tvT/3ToYPyyysA==}
-
-  '@farcaster/frame-sdk@0.0.31':
-    resolution: {integrity: sha512-ZRFA4HyfE1PIcEi++27ulSqrArv2qdVeYww7juM90DYgvqyGLtX6cTZS0UEoRL7iog2U8Rv2aq1ORLbePCBZuA==}
-
-  '@farcaster/frame-wagmi-connector@0.0.19':
-    resolution: {integrity: sha512-Ey9lEEk4SudkOiTtqY2eMGVTFZwW1lLMEtnAYqb7dCc/mDQowj3GfxNW9a2bdPoq5UEwAwJxxLiVvdERI+Hy3A==}
+  '@farcaster/frame-wagmi-connector@0.0.22':
+    resolution: {integrity: sha512-CVWvezX/K3MoXrG3nJI1ifC3FYlNaoDVKstFLQ7KtF2nOaZ7bW7yXkI4lsFRHBVekdtN3X7dIFrbC6n6EmKYqw==}
     peerDependencies:
-      '@farcaster/frame-sdk': ^0.0.31
+      '@farcaster/frame-sdk': ^0.0.34
       '@wagmi/core': ^2.14.1
       viem: ^2.21.55
 
@@ -4696,38 +4690,25 @@ snapshots:
       - utf-8-validate
       - viem
 
-  '@farcaster/frame-core@0.0.19(typescript@5.8.2)':
+  '@farcaster/frame-core@0.0.31(typescript@5.8.2)':
     dependencies:
       ox: 0.4.4(typescript@5.8.2)(zod@3.24.2)
       zod: 3.24.2
     transitivePeerDependencies:
       - typescript
 
-  '@farcaster/frame-core@0.0.22(typescript@5.8.2)':
+  '@farcaster/frame-node@0.0.20(typescript@5.8.2)':
     dependencies:
+      '@farcaster/frame-core': 0.0.31(typescript@5.8.2)
+      '@noble/curves': 1.8.1
       ox: 0.4.4(typescript@5.8.2)(zod@3.24.2)
       zod: 3.24.2
     transitivePeerDependencies:
       - typescript
 
-  '@farcaster/frame-core@0.0.29(typescript@5.8.2)':
+  '@farcaster/frame-sdk@0.0.34(typescript@5.8.2)(zod@3.24.2)':
     dependencies:
-      ox: 0.4.4(typescript@5.8.2)(zod@3.24.2)
-      zod: 3.24.2
-    transitivePeerDependencies:
-      - typescript
-
-  '@farcaster/frame-node@0.0.7(typescript@5.8.2)(zod@3.24.2)':
-    dependencies:
-      '@farcaster/frame-core': 0.0.19(typescript@5.8.2)
-      ox: 0.4.4(typescript@5.8.2)(zod@3.24.2)
-    transitivePeerDependencies:
-      - typescript
-      - zod
-
-  '@farcaster/frame-sdk@0.0.31(typescript@5.8.2)(zod@3.24.2)':
-    dependencies:
-      '@farcaster/frame-core': 0.0.29(typescript@5.8.2)
+      '@farcaster/frame-core': 0.0.31(typescript@5.8.2)
       comlink: 4.4.2
       eventemitter3: 5.0.1
       ox: 0.4.4(typescript@5.8.2)(zod@3.24.2)
@@ -4735,9 +4716,9 @@ snapshots:
       - typescript
       - zod
 
-  '@farcaster/frame-wagmi-connector@0.0.19(@farcaster/frame-sdk@0.0.31(typescript@5.8.2)(zod@3.24.2))(@wagmi/core@2.16.5(@tanstack/query-core@5.67.3)(@types/react@18.3.18)(react@18.3.1)(typescript@5.8.2)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)))(viem@2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2))':
+  '@farcaster/frame-wagmi-connector@0.0.22(@farcaster/frame-sdk@0.0.34(typescript@5.8.2)(zod@3.24.2))(@wagmi/core@2.16.5(@tanstack/query-core@5.67.3)(@types/react@18.3.18)(react@18.3.1)(typescript@5.8.2)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)))(viem@2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2))':
     dependencies:
-      '@farcaster/frame-sdk': 0.0.31(typescript@5.8.2)(zod@3.24.2)
+      '@farcaster/frame-sdk': 0.0.34(typescript@5.8.2)(zod@3.24.2)
       '@wagmi/core': 2.16.5(@tanstack/query-core@5.67.3)(@types/react@18.3.18)(react@18.3.1)(typescript@5.8.2)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2))
       viem: 2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
 
