@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import sdk from "@farcaster/frame-sdk";
-import { FrameContext, FrameNotificationDetails } from "@farcaster/frame-node";
+import { FrameNotificationDetails } from "@farcaster/frame-node";
+import type { FrameContext } from "@farcaster/frame-core/src/context";
 
 export function useFrameSDK() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
