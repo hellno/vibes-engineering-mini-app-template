@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
         await sendFrameNotification({
           fid,
           title: `Welcome to ${PROJECT_TITLE}`,
-          body: "Frame is now added to your client",
+          body: "mini app is added to your client",
         });
       } else {
         await deleteUserNotificationDetails(fid);
