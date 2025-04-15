@@ -31,23 +31,37 @@ function ExampleCard() {
 }
 
 function PaymentComponent() {
+  const [address, setAddress] = useState("vitalik.eth");
+
   return (
     <Card className="mt-4">
       <CardHeader>
         <CardTitle>Daimo Payment</CardTitle>
         <CardDescription>Pay $5 using USDC on Optimism</CardDescription>
       </CardHeader>
-      <CardContent className="flex justify-center">
-        {/* // ai! insert simple address entry from user and use it in toAddress */}
-        <DaimoPayButton
-          appId="pay-demo" /* Example app ID you can use for prototyping */
-          toChain={optimismUSDC.chainId}
-          toUnits="1.00" /* $1.00 USDC */
-          toToken={getAddress(optimismUSDC.token)}
-          toAddress="vitalik.eth´"
-          onPaymentStarted={(e) => console.log(e)}
-          onPaymentCompleted={(e) => console.log(e)}
-        />
+      <CardContent className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="address">Recipient Address</Label>
+          <input
+            id="address"
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter ETH address or ENS name"
+          />
+        </div>
+        <div className="flex justify-center">
+          <DaimoPayButton
+            appId="pay-demo" /* Example app ID you can use for prototyping */
+            toChain={optimismUSDC.chainId}
+            toUnits="1.00" /* $1.00 USDC */
+            toToken={getAddress(optimismUSDC.token)}
+            toAddress={address}
+            onPaymentStarted={(e) => console.log(e)}
+            onPaymentCompleted={(e) => console.log(e)}
+          />
+        </div>
       </CardContent>
     </Card>
   );
