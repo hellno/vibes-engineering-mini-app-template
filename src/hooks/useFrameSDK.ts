@@ -56,7 +56,7 @@ export function useFrameSDK() {
         setNotificationDetails(null);
       });
 
-      sdk.actions.ready();
+      sdk.actions.ready({ disableNativeGestures: true });
     };
 
     if (sdk && !isSDKLoaded) {
