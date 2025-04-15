@@ -6,6 +6,7 @@
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-explicit-any": "off",
+    // ai! how to igore errors like: Type error: Parameter 'file' implicitly has an 'any' type.
     "prefer-const": "off"
   }
 }
