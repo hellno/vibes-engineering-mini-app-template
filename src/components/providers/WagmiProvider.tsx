@@ -16,7 +16,6 @@ export const config = createConfig(
 const queryClient = new QueryClient();
 
 export default function Provider({ children }: { children: React.ReactNode }) {
-  console.log("YO FORM PROVIDER");
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
