@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useCallback, useState } from "react";
+import FileUploadCard from "~/components/FileUploadCard";
+import { Dropzone } from "~/components/dropzone";
+import { useSupabaseUpload } from "~/hooks/use-supabase-upload";
 import {
   Card,
   CardHeader,
@@ -13,6 +16,7 @@ import { Label } from "~/components/ui/label";
 import { useFrameSDK } from "~/hooks/useFrameSDK";
 import { baseUSDC, optimismUSDC } from "@daimo/contract";
 import { getAddress } from "viem";
+import BucketExplorer from "./BucketExplorer";
 
 function ExampleCard() {
   return (
@@ -81,9 +85,11 @@ export default function Frame() {
   }
 
   return (
-    <div className="w-[300px] mx-auto py-2 px-2">
+    <div className="w-[300px] mx-auto py-2 px-2 space-y-4">
       <ExampleCard />
       <PaymentComponent />
+      <FileUploadCard />
+      <BucketExplorer />
     </div>
   );
 }

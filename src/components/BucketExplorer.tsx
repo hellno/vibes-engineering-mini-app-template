@@ -1,0 +1,168 @@
+import React, { useRef, useEffect, useState } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
+import { createClient } from "~/lib/supabase/client";
+
+interface StorageObject {
+  name: string;
+  type: string;
+  size: number;
+  updated_at: Date;
+  metadata: {
+    mimetype: string;
+    size: number;
+    httpStatusCode: number;
+  };
+}
+
+type PageData = {
+  data: StorageObject[];
+  pageParam: number;
+};
+
+export default function BucketExplorer() {
+  const bucketName = `file-storage-${process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID!}`;
+
+  const [token, setToken] = useState<string | null>(null);
+  const [tokenError, setTokenError] = useState<string | null>(null);
+  const fetchToken = () => {
+    fetch("/api/get-jwt")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch token");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setToken(data.token);
+        setTokenError(null);
+      })
+      .catch((err) => {
+        console.error("Error fetching token", err);
+        setTokenError(err.message);
+      });
+  };
+
+  useEffect(() => {
+    fetchToken();
+  }, []);
+
+  const [files, setFiles] = useState<StorageObject[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+
+  const fetchFiles = async (pageParam: number) => {
+    if (!token) return;
+
+    const supabase = createClient(token); // fix import
+
+    setLoading(true);
+    try {
+      const result = await supabase.storage
+        .from(bucketName)
+        .list("", { limit: 50, offset: (pageParam - 1) * 50 });
+      if (result.error) {
+        setError(result.error.message);
+        setLoading(false);
+        return;
+      }
+      const filesArray = result.data as unknown as StorageObject[];
+      const filteredFiles = filesArray.filter(
+        (file) => !file?.name?.startsWith(".") && file.metadata.size > 0,
+      );
+      const filesWithPreview = filteredFiles.map((file) => {
+        if (file?.metadata.mimetype.startsWith("image/")) {
+          const {
+            data: { publicUrl },
+          } = supabase.storage.from(bucketName).getPublicUrl(file.name);
+          return { ...file, publicUrl };
+        }
+        return file;
+      });
+      setFiles((prev) => [...prev, ...filesWithPreview]);
+      setHasMore(filesArray.length === 50);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      fetchFiles(page);
+    }
+  }, [page, token]);
+
+  const fetchNextPage = () => {
+    if (!loading && hasMore) {
+      setPage((prev) => prev + 1);
+    }
+  };
+
+  const observerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!observerRef.current) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 1.0 },
+    );
+    observer.observe(observerRef.current);
+    return () => {
+      if (observerRef.current) observer.unobserve(observerRef.current);
+    };
+  }, [observerRef, hasMore, loading, fetchNextPage]);
+
+  if (!token) {
+    return tokenError ? (
+      <div>
+        <p>Error fetching token: {tokenError}</p>
+        <button onClick={fetchToken}>Retry</button>
+      </div>
+    ) : (
+      <p>Loading bucket explorer...</p>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Bucket Explorer</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {loading && page === 1 && <p>Loading...</p>}
+        {error && <p>Error: {error}</p>}
+        {files.length > 0 ? (
+          <ul>
+            {files.map((file, index) => (
+              <li key={`${file.name}-${index}`} className="border-b py-2">
+                <div className="font-semibold">{file.name}</div>
+                {file.metadata.mimetype?.startsWith("image/") &&
+                file?.publicUrl ? (
+                  <img
+                    src={file.publicUrl}
+                    alt={file.name}
+                    className="mt-2 h-32 w-auto object-cover rounded"
+                  />
+                ) : (
+                  <div className="text-sm text-gray-500">
+                    {file?.updated_at}
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          !loading && <p className="text-center py-4">No files to view yet</p>
+        )}
+        <div ref={observerRef} />
+      </CardContent>
+    </Card>
+  );
+}

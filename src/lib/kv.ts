@@ -1,6 +1,5 @@
 import { FrameNotificationDetails } from "@farcaster/frame-sdk";
 import { Redis } from "@upstash/redis";
-import { PROJECT_ID } from "~/lib/constants";
 
 const redis = new Redis({
   url: process.env.KV_REST_API_URL,
@@ -8,7 +7,7 @@ const redis = new Redis({
 });
 
 function getProjectKey(): string {
-  return PROJECT_ID;
+  return process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID!;
 }
 
 function getUserNotificationDetailsKey(fid: number): string {
@@ -16,22 +15,22 @@ function getUserNotificationDetailsKey(fid: number): string {
 }
 
 export async function getUserNotificationDetails(
-  fid: number
+  fid: number,
 ): Promise<FrameNotificationDetails | null> {
   return await redis.get<FrameNotificationDetails>(
-    getUserNotificationDetailsKey(fid)
+    getUserNotificationDetailsKey(fid),
   );
 }
 
 export async function setUserNotificationDetails(
   fid: number,
-  notificationDetails: FrameNotificationDetails
+  notificationDetails: FrameNotificationDetails,
 ): Promise<void> {
   await redis.set(getUserNotificationDetailsKey(fid), notificationDetails);
 }
 
 export async function deleteUserNotificationDetails(
-  fid: number
+  fid: number,
 ): Promise<void> {
   await redis.del(getUserNotificationDetailsKey(fid));
 }
