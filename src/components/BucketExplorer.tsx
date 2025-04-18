@@ -70,15 +70,21 @@ export default function BucketExplorer() {
         );
         const filesWithPreview = filteredFiles.map((file) => {
           if (file?.metadata.mimetype.startsWith("image/")) {
-            const {
-              data: { publicUrl },
-            } = supabase.storage.from(bucketName).getPublicUrl(file.name);
+            const { data: { publicUrl } } = supabase.storage.from(bucketName).getPublicUrl(file.name);
             return { ...file, publicUrl };
           }
           return file;
         });
-        setFiles((prev) => [...prev, ...filesWithPreview]);
-        setHasMore(filesArray.length === 50);
+        setFiles((prevFiles) => {
+          const newFiles = filesWithPreview.filter(
+            (file) => !prevFiles.some((existing) => existing.name === file.name)
+          );
+          const updatedFiles = [...prevFiles, ...newFiles];
+          if (filesWithPreview.length < 50 || newFiles.length === 0) {
+            setHasMore(false);
+          }
+          return updatedFiles;
+        });
       } catch (err: any) {
         setError(err.message);
       } finally {
