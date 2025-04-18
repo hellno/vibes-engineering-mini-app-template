@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
 import { createClient } from "~/lib/supabase/client";
 
@@ -15,14 +15,9 @@ interface StorageObject {
   };
 }
 
-type PageData = {
-  data: StorageObject[];
-  pageParam: number;
-};
+const bucketName = `file-storage-${process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID!}`;
 
 export default function BucketExplorer() {
-  const bucketName = `file-storage-${process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID!}`;
-
   const [token, setToken] = useState<string | null>(null);
   const [tokenError, setTokenError] = useState<string | null>(null);
   const fetchToken = () => {
@@ -53,42 +48,45 @@ export default function BucketExplorer() {
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true);
 
-  const fetchFiles = async (pageParam: number) => {
-    if (!token) return;
+  const fetchFiles = useCallback(
+    async (pageParam: number) => {
+      if (!token) return;
 
-    const supabase = createClient(token); // fix import
+      const supabase = createClient(token); // fix import
 
-    setLoading(true);
-    try {
-      const result = await supabase.storage
-        .from(bucketName)
-        .list("", { limit: 50, offset: (pageParam - 1) * 50 });
-      if (result.error) {
-        setError(result.error.message);
-        setLoading(false);
-        return;
-      }
-      const filesArray = result.data as unknown as StorageObject[];
-      const filteredFiles = filesArray.filter(
-        (file) => !file?.name?.startsWith(".") && file.metadata.size > 0,
-      );
-      const filesWithPreview = filteredFiles.map((file) => {
-        if (file?.metadata.mimetype.startsWith("image/")) {
-          const {
-            data: { publicUrl },
-          } = supabase.storage.from(bucketName).getPublicUrl(file.name);
-          return { ...file, publicUrl };
+      setLoading(true);
+      try {
+        const result = await supabase.storage
+          .from(bucketName)
+          .list("", { limit: 50, offset: (pageParam - 1) * 50 });
+        if (result.error) {
+          setError(result.error.message);
+          setLoading(false);
+          return;
         }
-        return file;
-      });
-      setFiles((prev) => [...prev, ...filesWithPreview]);
-      setHasMore(filesArray.length === 50);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+        const filesArray = result.data as unknown as StorageObject[];
+        const filteredFiles = filesArray.filter(
+          (file) => !file?.name?.startsWith(".") && file.metadata.size > 0,
+        );
+        const filesWithPreview = filteredFiles.map((file) => {
+          if (file?.metadata.mimetype.startsWith("image/")) {
+            const {
+              data: { publicUrl },
+            } = supabase.storage.from(bucketName).getPublicUrl(file.name);
+            return { ...file, publicUrl };
+          }
+          return file;
+        });
+        setFiles((prev) => [...prev, ...filesWithPreview]);
+        setHasMore(filesArray.length === 50);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [token, bucketName],
+  );
 
   useEffect(() => {
     if (token) {
