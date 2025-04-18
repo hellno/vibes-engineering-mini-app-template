@@ -6,7 +6,8 @@ interface StorageObject {
   name: string;
   type: string;
   size: number;
-  updated_at: Date;
+  updated_at: string;
+  publicUrl?: string;
   metadata: {
     mimetype: string;
     size: number;
@@ -93,7 +94,7 @@ export default function BucketExplorer() {
     if (token) {
       fetchFiles(page);
     }
-  }, [page, token]);
+  }, [page, token, fetchFiles]);
 
   const fetchNextPage = () => {
     if (!loading && hasMore) {

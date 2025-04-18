@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect, useCallback, useState } from "react";
+import { useState } from "react";
 import FileUploadCard from "~/components/FileUploadCard";
-import { Dropzone } from "~/components/dropzone";
-import { useSupabaseUpload } from "~/hooks/use-supabase-upload";
 import {
   Card,
   CardHeader,
@@ -14,7 +12,7 @@ import {
 import { DaimoPayButton } from "@daimo/pay";
 import { Label } from "~/components/ui/label";
 import { useFrameSDK } from "~/hooks/useFrameSDK";
-import { baseUSDC, optimismUSDC } from "@daimo/contract";
+import { baseUSDC } from "@daimo/contract";
 import { getAddress } from "viem";
 import BucketExplorer from "./BucketExplorer";
 
@@ -77,7 +75,7 @@ function PaymentComponent() {
   );
 }
 
-export default function Frame() {
+export default function MiniApp() {
   const { isSDKLoaded } = useFrameSDK();
 
   if (!isSDKLoaded) {
@@ -85,7 +83,7 @@ export default function Frame() {
   }
 
   return (
-    <div className="w-[300px] mx-auto py-2 px-2 space-y-4">
+    <div className="w-[400px] mx-auto py-2 px-2 space-y-4">
       <ExampleCard />
       <PaymentComponent />
       <FileUploadCard />
