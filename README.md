@@ -1,19 +1,45 @@
 # vibes engineering mini app template
 
-this repo contains a template for Farcaster mini apps (formerly known as frames v2):  
-✅ shadcn and tailwindcss for styling  
-✅ useFrameSDK hook to easily work with Farcaster mini app environment  
-✅ llm_docs folder for bringing context to LLMs  
+**TL;DR:** A developer‑friendly Farcaster Mini App starter kit built with Next.js, React, TypeScript, Tailwind CSS, and the Mini Apps SDK. Comes with out‑of‑the‑box wallet auth, file uploads (Supabase), notifications, webhooks, and reusable UI components.
 
 ![image](https://github.com/user-attachments/assets/778893f9-ef65-48bd-a3d0-5e2b3e4b3453)
 
-Architecture
+contains a developer-ready template for Farcaster Mini Apps (formerly Frames v2) with out-of-the-box features:
 
-The application is structured around the following key layers:
+- shadcn/ui and Tailwind CSS for UI and styling
+- Mini Apps SDK integration via the `useFrameSDK` hook
+- Wallet authentication powered by Wagmi
+- Supabase file uploads with `FileUpload` and `FileUploadCard` components
+- Notification API endpoint (`/api/send-notification`)
+- Webhook handling route (`/api/webhook`)
+- `BucketExplorer` component for browsing Supabase storage
+- Optimized Open Graph image generation
+- Drag‑and‑drop Dropzone UI component
+- Theme support and toggle via `ThemeProvider` & `ThemeToggle`
 
-- Providers Layer: Manages global state and configurations, including wallet connections and SDK setup.
-- Components Layer: Encapsulates UI elements and interactive features, such as buttons for actions and context displays.
-- Hooks and Utilities: Facilitates interactions with the Frame SDK and Wagmi, handling asynchronous operations and state management.
+## Architecture
+
+This template is organized into several logical layers:
+
+- Providers Layer: Wraps the application with global providers (`WagmiProvider`, `ThemeProvider`, `QueryClientProvider`, `DaimoPayProvider`), managing wallet authentication, theming, and SDK context.
+- Components Layer: Houses reusable UI elements (e.g., `FileUpload`, `FileUploadCard`, `BucketExplorer`, `Dropzone`, navigation actions, switchers) built with shadcn/ui and Tailwind CSS.
+- Hooks & Utilities: Offers custom hooks like `useFrameSDK`, `useSupabaseUpload`, `useToast`, and `useMobile` for interacting with the Mini Apps SDK, Supabase storage, toasts, and responsive state.
+- API Routes: Implements serverless endpoints under `src/app/api` for file uploads (`/api/upload`), notifications (`/api/send-notification`), and webhook processing (`/api/webhook`).
+- Configuration: Controlled via environment variables (`NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`). These must be set to your Vibes Engineering Project ID and Supabase credentials for production deployments to enable secure file storage and API access.
+
+Note: To run in production, ensure you have configured the Vibes Engineering Project ID and Supabase endpoint variables; without these, storage uploads and APIs will not function correctly.
+
+## Recent Changes
+
+- Added file upload feature with Supabase, including FileUpload components, and an `/api/upload` endpoint.
+- Implemented notification API with `/api/send-notification` endpoint.
+- Added webhook handling via `/api/webhook` route.
+- Introduced BucketExplorer component for listing Supabase bucket objects.
+- Improved Open Graph image generation with `src/app/opengraph-image.tsx`.
+- Added Dropzone UI component for drag-and-drop uploads.
+- Integrated team switcher and navigation actions UI (`nav-actions.tsx` and `team-switcher.tsx`).
+- Enhanced providers: `WagmiProvider` configuration and `theme-provider.tsx`.
+- Updated hooks including `useSupabaseUpload` and `useFrameSDK`.
 
 ## Run
 
