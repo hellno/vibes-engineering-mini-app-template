@@ -1,11 +1,11 @@
-# farcaster frames template
+# vibes engineering mini app template
 
 this repo contains a template for Farcaster mini apps (formerly known as frames v2):  
 ✅ shadcn and tailwindcss for styling  
 ✅ useFrameSDK hook to easily work with Farcaster mini app environment  
 ✅ llm_docs folder for bringing context to LLMs  
 
-![farcaster_frame_template_small](https://github.com/user-attachments/assets/38b9ddef-89fa-4864-9397-a70689314da7)
+![image](https://github.com/user-attachments/assets/778893f9-ef65-48bd-a3d0-5e2b3e4b3453)
 
 Architecture
 
