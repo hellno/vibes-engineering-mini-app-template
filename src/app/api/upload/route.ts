@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { createSupabaseClientWithToken } from "~/lib/supabase";
 
 export async function POST(request: NextRequest) {
   // Parse multipart form data using built-in formData()
@@ -22,14 +23,7 @@ export async function POST(request: NextRequest) {
     );
   }
   const { token } = await jwtResponse.json();
-  // Create Supabase client using fetched token
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      global: { headers: { Authorization: `Bearer ${token}` } },
-    },
-  );
+  const supabase = createSupabaseClientWithToken(token);
 
   // Compute bucket name from env var
   const bucket = `file-storage-${process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID}`;

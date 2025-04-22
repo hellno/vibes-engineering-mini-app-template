@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
-import { createClient } from "~/lib/supabase/client";
+import { createSupabaseClientWithToken } from "~/lib/supabase";
 
 interface StorageObject {
   name: string;
@@ -52,7 +52,7 @@ export default function BucketExplorer() {
     async (pageParam: number) => {
       if (!token) return;
 
-      const supabase = createClient(token); // fix import
+      const supabase = createSupabaseClientWithToken(token);
 
       setLoading(true);
       try {

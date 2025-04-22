@@ -1,4 +1,3 @@
-import { createClient } from "~/lib/supabase/client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   type FileError,
@@ -117,7 +116,7 @@ const useSupabaseUpload = (options: UseSupabaseUploadOptions) => {
 
   const onUpload = useCallback(async () => {
     setLoading(true);
-  
+
     const filesWithErrors = errors.map((x) => x.name);
     const filesToUpload =
       filesWithErrors.length > 0
@@ -126,7 +125,7 @@ const useSupabaseUpload = (options: UseSupabaseUploadOptions) => {
             ...files.filter((f) => !successes.includes(f.name)),
           ]
         : files;
-  
+
     const responses = await Promise.all(
       filesToUpload.map(async (file) => {
         const formData = new FormData();
@@ -140,18 +139,18 @@ const useSupabaseUpload = (options: UseSupabaseUploadOptions) => {
           return { name: file.name, message: result.error || "Upload failed" };
         }
         return { name: file.name, message: undefined };
-      })
+      }),
     );
-  
+
     const responseErrors = responses.filter((x) => x.message !== undefined);
     setErrors(responseErrors);
-  
+
     const responseSuccesses = responses.filter((x) => x.message === undefined);
     const newSuccesses = Array.from(
-      new Set([...successes, ...responseSuccesses.map((x) => x.name)])
+      new Set([...successes, ...responseSuccesses.map((x) => x.name)]),
     );
     setSuccesses(newSuccesses);
-  
+
     setLoading(false);
   }, [files, errors, successes]);
 
