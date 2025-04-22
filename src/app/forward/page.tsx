@@ -3,9 +3,11 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { Button } from "~/components/ui/button";
+import { useFrameSDK } from "~/hooks/useFrameSDK";
 
 export default function ForwardPage() {
   const searchParams = useSearchParams();
+  const { sdk } = useFrameSDK();
 
   const url = useMemo(() => {
     let url = searchParams.get("url");
@@ -18,10 +20,12 @@ export default function ForwardPage() {
   }, [searchParams]);
 
   useEffect(() => {
-    if (url) {
+    if (sdk && url) {
+      sdk.actions.openUrl(url);
+    } else if (url) {
       window.location.replace(url);
     }
-  }, [url]);
+  }, [url, sdk]);
 
   if (!url) {
     return (
