@@ -1,83 +1,18 @@
-import {
-  ParseWebhookEvent,
-  parseWebhookEvent,
-  verifyAppKeyWithNeynar,
-} from "@farcaster/frame-node";
-import { NextRequest } from "next/server";
-import { PROJECT_TITLE } from "~/lib/constants";
-import {
-  deleteUserNotificationDetails,
-  setUserNotificationDetails,
-} from "~/lib/kv";
-import { sendFrameNotification } from "~/lib/notifs";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const requestJson = await request.json();
+  const body = await request.text();
+  console.log("/webhook POST", body);
 
-  let data;
-  try {
-    data = await parseWebhookEvent(requestJson, verifyAppKeyWithNeynar);
-  } catch (e: unknown) {
-    const error = e as ParseWebhookEvent.ErrorType;
+  const notificationBackendEndpoint = `${process.env.VIBES_ENGINEERING_NOTIFICATION_BACKEND_ENDPOINT}?project_id=${process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID}`;
 
-    switch (error.name) {
-      case "VerifyJsonFarcasterSignature.InvalidDataError":
-      case "VerifyJsonFarcasterSignature.InvalidEventDataError":
-        // The request data is invalid
-        return Response.json(
-          { success: false, error: error.message },
-          { status: 400 },
-        );
-      case "VerifyJsonFarcasterSignature.InvalidAppKeyError":
-        // The app key is invalid
-        return Response.json(
-          { success: false, error: error.message },
-          { status: 401 },
-        );
-      case "VerifyJsonFarcasterSignature.VerifyAppKeyError":
-        // Internal error verifying the app key (caller may want to try again)
-        return Response.json(
-          { success: false, error: error.message },
-          { status: 500 },
-        );
-    }
-  }
-
-  const fid = data.fid;
-  const event = data.event;
-
-  switch (event.event) {
-    case "frame_added":
-      if (event.notificationDetails) {
-        await setUserNotificationDetails(fid, event.notificationDetails);
-        await sendFrameNotification({
-          fid,
-          title: `Welcome to ${PROJECT_TITLE}`,
-          body: "mini app is added to your client",
-        });
-      } else {
-        await deleteUserNotificationDetails(fid);
-      }
-
-      break;
-    case "frame_removed":
-      await deleteUserNotificationDetails(fid);
-
-      break;
-    case "notifications_enabled":
-      await setUserNotificationDetails(fid, event.notificationDetails);
-      await sendFrameNotification({
-        fid,
-        title: "Ding ding ding",
-        body: "Notifications are now enabled",
-      });
-
-      break;
-    case "notifications_disabled":
-      await deleteUserNotificationDetails(fid);
-
-      break;
-  }
-
-  return Response.json({ success: true });
+  const res = await fetch(notificationBackendEndpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": request.headers.get("content-type") || "application/json",
+    },
+    body,
+  });
+  const data = await res.json();
+  return NextResponse.json(data, { status: res.status });
 }
