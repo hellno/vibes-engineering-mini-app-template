@@ -61,7 +61,7 @@ function PaymentComponent() {
         </div>
         <div className="flex justify-center">
           <DaimoPayButton
-            appId="pay-demo" /* Example app ID you can use for prototyping */
+            appId={process.env.NEXT_PUBLIC_DAIMO_PAY_KEY || "pay-demo"}
             toChain={baseUSDC.chainId}
             toUnits="1.00" /* $1.00 USDC */
             toToken={getAddress(baseUSDC.token)}
