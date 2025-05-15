@@ -20,6 +20,7 @@ export async function GET() {
       iconUrl: `${appUrl}/icon.png`,
       homeUrl: appUrl,
       imageUrl: `${appUrl}/frames/hello/opengraph-image`,
+      ogImageUrl: `${appUrl}/frames/hello/opengraph-image`,
       buttonTitle: "Launch Frame",
       splashImageUrl: `${appUrl}/splash.png`,
       splashBackgroundColor: "#f7f7f7",
