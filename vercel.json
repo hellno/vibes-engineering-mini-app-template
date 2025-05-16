@@ -1,0 +1,4 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npx turbo run build"
+}
