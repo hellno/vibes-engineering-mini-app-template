@@ -1,5 +1,6 @@
 {
-  "name": "farcaster-frames-template",
+  "name": "vibes-engineering-mini-app-template",
+  "packageManager": "pnpm@8.15.1",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -88,6 +89,7 @@
     "eslint-config-next": "15.0.3",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
+    "turbo": "^2.5.3",
     "typescript": "^5.8.2"
   }
 }
