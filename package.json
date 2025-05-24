@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@daimo/contract": "^1.6.0",
-    "@daimo/pay": "^1.7.4",
+    "@daimo/pay": "^1.8.4",
     "@farcaster/auth-client": "^0.3.0",
     "@farcaster/auth-kit": "^0.6.0",
     "@farcaster/frame-core": "^0.0.31",
