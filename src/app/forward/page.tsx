@@ -3,11 +3,11 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { Button } from "~/components/ui/button";
-import { useFrameSDK } from "~/hooks/useFrameSDK";
+import { useMiniAppSdk } from "~/hooks/use-miniapp-sdk";
 
 export default function ForwardPage() {
   const searchParams = useSearchParams();
-  const { sdk } = useFrameSDK();
+  const { sdk } = useMiniAppSdk();
 
   const url = useMemo(() => {
     let url = searchParams.get("url");

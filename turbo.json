@@ -2,7 +2,15 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build": {
-      "outputs": [".next/**"]
+      "outputs": [".next/**", ".vercel/**"],
+      "inputs": [
+        "src/**",
+        "public/**",
+        "package.json",
+        "next.config.*",
+        "tailwind.config.*"
+      ],
+      "dependsOn": ["^build"]
     }
   },
   "envMode": "loose"
