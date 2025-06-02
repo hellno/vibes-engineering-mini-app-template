@@ -16,7 +16,7 @@
     "@farcaster/auth-kit": "^0.6.0",
     "@farcaster/frame-core": "^0.0.31",
     "@farcaster/frame-node": "^0.0.20",
-    "@farcaster/frame-sdk": "^0.0.34",
+    "@farcaster/frame-sdk": "^0.0.53",
     "@farcaster/frame-wagmi-connector": "^0.0.22",
     "@hookform/resolvers": "^3.10.0",
     "@neynar/nodejs-sdk": "^2.19.0",

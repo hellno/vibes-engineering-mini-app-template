@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Home, MoreHorizontal, Settings2, X } from "lucide-react";
+import { Home, MoreHorizontal, User, X } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import sdk from "@farcaster/frame-sdk";
 
@@ -21,10 +21,12 @@ import {
   SidebarMenuItem,
 } from "~/components/ui/sidebar";
 import { useRouter } from "next/navigation";
+import { PROJECT_CREATOR } from "~/lib/constants";
+import { useMiniAppSdk } from "~/hooks/use-miniapp-sdk";
 
 type NavItem = {
   label: string;
-  icon: LucideIcon;
+  icon: LucideIcon | (() => React.JSX.Element);
 } & (
   | {
       href: string;
@@ -43,10 +45,26 @@ const data: NavItem[][] = [
       icon: Home,
       href: "/",
     },
+    {
+      label: `Made by ${PROJECT_CREATOR}`,
+      icon: User,
+      href: `https://farcaster.xyz/${PROJECT_CREATOR}`,
+    },
+    {
+      label: "Built with Vibes",
+      icon: () => (
+        <img
+          src="https://vibes.engineering/icon.png"
+          className="h-5 w-5"
+          alt="Vibes"
+        />
+      ),
+      href: "https://vibes.engineering",
+    },
   ],
   [
     {
-      label: "Close Frame",
+      label: "Close",
       icon: X,
       action: () => sdk.actions.close(),
     },
@@ -54,6 +72,7 @@ const data: NavItem[][] = [
 ];
 
 export function NavActions() {
+  const { isMiniApp } = useMiniAppSdk();
   const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -84,7 +103,11 @@ export function NavActions() {
                           <SidebarMenuButton
                             onClick={() => {
                               if (item.href) {
-                                router.push(item.href);
+                                if (isMiniApp) {
+                                  sdk.actions.openUrl(item.href);
+                                } else {
+                                  router.push(item.href);
+                                }
                               } else if (item.action) {
                                 item.action();
                               }
