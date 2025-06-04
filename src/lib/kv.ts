@@ -1,36 +1,55 @@
-import { FrameNotificationDetails } from "@farcaster/frame-sdk";
-import { Redis } from "@upstash/redis";
+import { createClient } from "@supabase/supabase-js";
 
-const redis = new Redis({
-  url: process.env.KV_REST_API_URL,
-  token: process.env.KV_REST_API_TOKEN,
-});
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+);
 
-function getProjectKey(): string {
-  return process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID!;
-}
+const pid = process.env.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID!;
+export const kv = {
+  get: async (key: string): Promise<any> => {
+    // kv_get returns JSONB, which Supabase surfaces as a JavaScript object/primitive
+    const { data, error } = await supabase.rpc("kv_get", { pid, k: key });
+    if (error) throw error;
+    return data; // JSONB value or null
+  },
 
-function getUserNotificationDetailsKey(fid: number): string {
-  return `${getProjectKey()}:${fid}`;
-}
+  set: async (key: string, v: any): Promise<void> => {
+    // kv_set takes a JSONB argument; if v is a JS primitive/object, Supabase auto‐converts it
+    const { error } = await supabase.rpc("kv_set", { pid, k: key, v });
+    if (error) throw error;
+  },
 
-export async function getUserNotificationDetails(
-  fid: number,
-): Promise<FrameNotificationDetails | null> {
-  return await redis.get<FrameNotificationDetails>(
-    getUserNotificationDetailsKey(fid),
-  );
-}
+  incr: async (key: string, delta = 1): Promise<number> => {
+    // kv_incr returns an INT (JavaScript number)
+    const { data, error } = await supabase.rpc("kv_incr", {
+      pid,
+      k: key,
+      delta,
+    });
+    if (error) throw error;
+    return data as number;
+  },
 
-export async function setUserNotificationDetails(
-  fid: number,
-  notificationDetails: FrameNotificationDetails,
-): Promise<void> {
-  await redis.set(getUserNotificationDetailsKey(fid), notificationDetails);
-}
+  append: async (key: string, elem: any): Promise<any> => {
+    // kv_append returns the updated JSONB array
+    const { data, error } = await supabase.rpc("kv_append", {
+      pid,
+      k: key,
+      elem,
+    });
+    if (error) throw error;
+    return data as any;
+  },
 
-export async function deleteUserNotificationDetails(
-  fid: number,
-): Promise<void> {
-  await redis.del(getUserNotificationDetailsKey(fid));
-}
+  merge: async (key: string, patch: object): Promise<any> => {
+    // kv_merge returns the merged JSONB object
+    const { data, error } = await supabase.rpc("kv_merge", {
+      pid,
+      k: key,
+      patch,
+    });
+    if (error) throw error;
+    return data as any;
+  },
+};

@@ -10,7 +10,6 @@ contains a developer-ready template for Farcaster Mini Apps (formerly Frames v2)
 - Mini Apps SDK integration via the `useFrameSDK` hook
 - Wallet authentication powered by Wagmi
 - Supabase file uploads with `FileUpload` and `FileUploadCard` components
-- Notification API endpoint (`/api/send-notification`)
 - Webhook handling route (`/api/webhook`)
 - `BucketExplorer` component for browsing Supabase storage
 - Optimized Open Graph image generation
@@ -24,7 +23,7 @@ This template is organized into several logical layers:
 - Providers Layer: Wraps the application with global providers (`WagmiProvider`, `ThemeProvider`, `QueryClientProvider`, `DaimoPayProvider`), managing wallet authentication, theming, and SDK context.
 - Components Layer: Houses reusable UI elements (e.g., `FileUpload`, `FileUploadCard`, `BucketExplorer`, `Dropzone`, navigation actions, switchers) built with shadcn/ui and Tailwind CSS.
 - Hooks & Utilities: Offers custom hooks like `useFrameSDK`, `useSupabaseUpload`, `useToast`, and `useMobile` for interacting with the Mini Apps SDK, Supabase storage, toasts, and responsive state.
-- API Routes: Implements serverless endpoints under `src/app/api` for file uploads (`/api/upload`), notifications (`/api/send-notification`), and webhook processing (`/api/webhook`).
+- API Routes: Implements serverless endpoints under `src/app/api` for file uploads (`/api/upload`) and webhook processing (`/api/webhook`).
 - Configuration: Controlled via environment variables (`NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`). These must be set to your Vibes Engineering Project ID and Supabase credentials for production deployments to enable secure file storage and API access.
 
 Note: To run in production, ensure you have configured the Vibes Engineering Project ID and Supabase endpoint variables; without these, storage uploads and APIs will not function correctly.

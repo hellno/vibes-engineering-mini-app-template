@@ -5,6 +5,7 @@ import { useMiniAppSdk } from "~/hooks/use-miniapp-sdk";
 import { baseUSDC } from "@daimo/contract";
 import { getAddress } from "viem";
 import { DaimoPayTransferButton } from "./daimo-pay-transfer-button";
+import VisitorCounter from "./VisitorCounter";
 
 export default function MiniApp() {
   const { isSDKLoaded } = useMiniAppSdk();
@@ -26,6 +27,7 @@ export default function MiniApp() {
         onPaymentCompleted={() => console.log("Payment completed")}
       />
       <FileUploadCard />
+      <VisitorCounter />
       {/* TEMPLATE_CONTENT_END */}
     </div>
   );
