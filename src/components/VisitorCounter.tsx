@@ -36,18 +36,20 @@ export default function VisitorCounter() {
     prevCountRef.current = count;
   }, [count]);
 
-  if (count === null) return <p>Loading…</p>;
-
   return (
     <div className="rounded-xl border p-4 text-xl inline-block">
       Visitors:{" "}
-      <span
-        className={`inline-block transition-transform duration-300 ease-out ${
-          anim ? "text-blue-800 animate-pulse" : ""
-        }`}
-      >
-        {count}
-      </span>
+      {count === null ? (
+        <div className="w-4 h-4 rounded-full bg-gray-300 animate-pulse" />
+      ) : (
+        <span
+          className={`inline-block transition-transform duration-300 ease-out ${
+            anim ? "text-blue-800 animate-pulse" : ""
+          }`}
+        >
+          {count}
+        </span>
+      )}
     </div>
   );
 }
