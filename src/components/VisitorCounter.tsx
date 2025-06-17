@@ -37,14 +37,14 @@ export default function VisitorCounter() {
   }, [count]);
 
   return (
-    <div className="rounded-xl border p-4 text-xl inline-block">
-      Visitors:{" "}
+    <div className="rounded-xl border p-4 text-xl flex">
+      Visitors:
       {count === null ? (
-        <div className="w-4 h-4 rounded-full bg-gray-300 animate-pulse" />
+        <div className="ml-1 w-6 h-6 rounded-full bg-foreground/80" />
       ) : (
         <span
-          className={`inline-block transition-transform duration-300 ease-out ${
-            anim ? "text-blue-800 animate-pulse" : ""
+          className={`ml-1 inline-block transition-transform duration-300 ease-out ${
+            anim ? "text-foreground/80 animate-in" : ""
           }`}
         >
           {count}

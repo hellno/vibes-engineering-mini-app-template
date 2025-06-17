@@ -6,6 +6,12 @@
 
 contains a developer-ready template for Farcaster Mini Apps (formerly Frames v2) with out-of-the-box features:
 
+## Examples
+
+Visit `/examples` to see live demos of all the included components and features, including file uploads, payment buttons, and visitor counters.
+
+## Features
+
 - shadcn/ui and Tailwind CSS for UI and styling
 - Mini Apps SDK integration via the `useFrameSDK` hook
 - Wallet authentication powered by Wagmi
