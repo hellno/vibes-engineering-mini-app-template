@@ -1,56 +1,192 @@
 import { ImageResponse } from "next/og";
-import { PROJECT_TITLE, PROJECT_DESCRIPTION } from "~/lib/constants";
+import { PROJECT_TITLE, PROJECT_DESCRIPTION, PROJECT_AVATAR_URL } from "~/lib/constants";
 
 export const alt = PROJECT_TITLE;
 export const contentType = "image/png";
-
-// Create reusable options object
-let imageOptions: any = null;
-
-// Initialize fonts
-async function initializeFonts() {
-  if (imageOptions) return imageOptions;
-
-  try {
-    imageOptions = {
-      width: 1200,
-      height: 800,
-    };
-
-    return imageOptions;
-  } catch (error) {
-    throw error;
-  }
-}
+export const size = {
+  width: 1200,
+  height: 630,
+};
 
 export default async function Image() {
-  const options = await initializeFonts();
-
-  const BACKGROUND_GRADIENT_START = "#c026d3";
-  const BACKGROUND_GRADIENT_END = "#ef4444";
-  const BACKGROUND_GRADIENT_STYLE = {
-    backgroundImage: `linear-gradient(to bottom, ${BACKGROUND_GRADIENT_START}, ${BACKGROUND_GRADIENT_END})`,
-    color: "white",
-  };
-
-  /*
-this Image is rendered using vercel/satori.
-
-Satori supports a limited subset of HTML and CSS features, due to its special use cases. In general, only these static and visible elements and properties that are implemented.
-For example, the <input> HTML element, the cursor CSS property are not in consideration. And you can't use <style> tags or external resources via <link> or <script>.
-Also, Satori does not guarantee that the SVG will 100% match the browser-rendered HTML output since Satori implements its own layout engine based on the SVG 1.1 spec.
-Please refer to Satori’s documentation for a list of supported HTML and CSS features. https://github.com/vercel/satori#css
-*/
   return new ImageResponse(
     (
       <div
-        tw="h-full w-full flex flex-col justify-center items-center relative"
-        style={BACKGROUND_GRADIENT_STYLE}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          height: "100%",
+          backgroundColor: "#1a1a1a",
+          position: "relative",
+          overflow: "hidden",
+        }}
       >
-        <h1 tw="text-9xl text-center font-semibold">{PROJECT_TITLE}</h1>
-        <h3 tw="text-4xl font-normal">{PROJECT_DESCRIPTION}</h3>
+        {/* Background gradient with Farcaster purple and electric blue */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "linear-gradient(135deg, #8A63D2 0%, #1E90FF 100%)",
+            opacity: 0.9,
+          }}
+        />
+        
+        {/* Subtle pattern overlay for depth */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage: "radial-gradient(circle at 20% 80%, rgba(138, 99, 210, 0.4) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(30, 144, 255, 0.4) 0%, transparent 50%)",
+          }}
+        />
+        
+        {/* Main content container - centered in safe zone */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+            height: "100%",
+            padding: "60px",
+            position: "relative",
+            zIndex: 10,
+          }}
+        >
+          {/* User avatar with glow effect */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: "32px",
+              position: "relative",
+            }}
+          >
+            {/* Avatar container */}
+            <div
+              style={{
+                width: "100px",
+                height: "100px",
+                borderRadius: "50%",
+                overflow: "hidden",
+                border: "4px solid rgba(255, 255, 255, 0.9)",
+                backgroundColor: "#ffffff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+              }}
+            >
+              <img
+                src={PROJECT_AVATAR_URL}
+                alt="User avatar"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
+          </div>
+          
+          {/* Project title with high contrast */}
+          <h1
+            style={{
+              fontSize: "56px",
+              fontWeight: "800",
+              color: "#ffffff",
+              textAlign: "center",
+              marginBottom: "16px",
+              lineHeight: 1.1,
+              letterSpacing: "-1px",
+              textShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+              maxWidth: "900px",
+              fontFamily: "system-ui, -apple-system, sans-serif",
+            }}
+          >
+            {PROJECT_TITLE}
+          </h1>
+          
+          {/* Project description */}
+          <p
+            style={{
+              fontSize: "28px",
+              fontWeight: "500",
+              color: "rgba(255, 255, 255, 0.95)",
+              textAlign: "center",
+              marginBottom: "40px",
+              lineHeight: 1.4,
+              textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+              maxWidth: "700px",
+              fontFamily: "system-ui, -apple-system, sans-serif",
+            }}
+          >
+            {PROJECT_DESCRIPTION}
+          </p>
+          
+          {/* Farcaster branding element */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              padding: "16px 32px",
+              backgroundColor: "rgba(255, 255, 255, 0.15)",
+              borderRadius: "100px",
+              border: "2px solid rgba(255, 255, 255, 0.3)",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            {/* Farcaster icon */}
+            <svg 
+              width="24" 
+              height="24" 
+              viewBox="0 0 256 256" 
+              fill="none"
+              style={{
+                display: "block",
+              }}
+            >
+              <rect width="256" height="256" rx="56" fill="#7C65C1"></rect>
+              <path d="M183.296 71.68H211.968L207.872 94.208H200.704V180.224L201.02 180.232C204.266 180.396 206.848 183.081 206.848 186.368V191.488L207.164 191.496C210.41 191.66 212.992 194.345 212.992 197.632V202.752H155.648V197.632C155.648 194.345 158.229 191.66 161.476 191.496L161.792 191.488V186.368C161.792 183.081 164.373 180.396 167.62 180.232L167.936 180.224V138.24C167.936 116.184 150.056 98.304 128 98.304C105.944 98.304 88.0638 116.184 88.0638 138.24V180.224L88.3798 180.232C91.6262 180.396 94.2078 183.081 94.2078 186.368V191.488L94.5238 191.496C97.7702 191.66 100.352 194.345 100.352 197.632V202.752H43.0078V197.632C43.0078 194.345 45.5894 191.66 48.8358 191.496L49.1518 191.488V186.368C49.1518 183.081 51.7334 180.396 54.9798 180.232L55.2958 180.224V94.208H48.1278L44.0318 71.68H72.7038V54.272H183.296V71.68Z" fill="white"></path>
+            </svg>
+            <span
+              style={{
+                fontSize: "20px",
+                fontWeight: "600",
+                color: "#ffffff",
+                fontFamily: "system-ui, -apple-system, sans-serif",
+              }}
+            >
+              Farcaster Mini App
+            </span>
+          </div>
+        </div>
+        
+        {/* Bottom gradient fade for depth */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "200px",
+            background: "linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 100%)",
+          }}
+        />
       </div>
     ),
-    options,
+    {
+      ...size,
+    }
   );
 }
