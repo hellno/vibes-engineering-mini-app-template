@@ -21,7 +21,7 @@ export async function GET() {
       homeUrl: appUrl,
       imageUrl: `${appUrl}/frames/hello/opengraph-image`,
       ogImageUrl: `${appUrl}/frames/hello/opengraph-image`,
-      buttonTitle: "Launch Frame",
+      buttonTitle: "Open",
       splashImageUrl: `${appUrl}/splash.png`,
       splashBackgroundColor: "#f7f7f7",
       webhookUrl: `${appUrl}/api/webhook`,
