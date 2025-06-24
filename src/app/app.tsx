@@ -8,12 +8,6 @@ export default function App() {
       {/* TEMPLATE_CONTENT_START - Replace content below */}
       <h1 className="text-3xl font-semibold mb-4">{PROJECT_TITLE}</h1>
       <p className="text-lg text-gray-600 mb-4">Under Construction</p>
-      <a
-        href="/examples"
-        className="text-blue-600 hover:text-blue-800 text-sm underline"
-      >
-        View Examples →
-      </a>
       {/* TEMPLATE_CONTENT_END */}
     </div>
   );
