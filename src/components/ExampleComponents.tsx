@@ -7,7 +7,7 @@ import { getAddress } from "viem";
 import { DaimoPayTransferButton } from "./daimo-pay-transfer-button";
 import VisitorCounter from "./VisitorCounter";
 
-export default function MiniApp() {
+export default function ExampleComponents() {
   const { isSDKLoaded } = useMiniAppSdk();
 
   if (!isSDKLoaded) {

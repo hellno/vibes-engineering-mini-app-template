@@ -6,6 +6,11 @@ const appUrl =
   process.env.NEXT_PUBLIC_URL ||
   `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
 
+// DANGER ZONE: CRITICAL Frame v2 metadata - ONLY modify if explicitly requested
+// This frame config is REQUIRED for Farcaster mini app functionality
+// Breaking this will break the entire mini app - modify with extreme caution
+// Safe to change: button.title, splashBackgroundColor, name
+// NEVER change: version, action.type, action structure
 const frame = {
   version: "next",
   imageUrl: `${appUrl}/opengraph-image`,
@@ -20,6 +25,7 @@ const frame = {
     },
   },
 };
+// END DANGER ZONE
 
 export const revalidate = 300;
 

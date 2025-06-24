@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 
-const MiniApp = dynamic(() => import("~/components/MiniApp"), {
+const ExampleComponents = dynamic(() => import("~/components/ExampleComponents"), {
   ssr: false,
 });
 
@@ -15,7 +15,7 @@ export default function ExamplesPage() {
           Demo of various components available in this template
         </p>
       </div>
-      <MiniApp />
+      <ExampleComponents />
     </div>
   );
 }
