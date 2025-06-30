@@ -103,16 +103,18 @@ export default function BucketExplorer() {
     }
   }, [page, token, fetchFiles]);
 
-  const fetchNextPage = () => {
+  const fetchNextPage = useCallback(() => {
     if (!loading && hasMore) {
       setPage((prev) => prev + 1);
     }
-  };
+  }, [loading, hasMore]);
 
   const observerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!observerRef.current) return;
+    const currentElement = observerRef.current;
+    if (!currentElement) return;
+    
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore && !loading) {
@@ -121,11 +123,11 @@ export default function BucketExplorer() {
       },
       { threshold: 1.0 },
     );
-    observer.observe(observerRef.current);
+    observer.observe(currentElement);
     return () => {
-      if (observerRef.current) observer.unobserve(observerRef.current);
+      if (currentElement) observer.unobserve(currentElement);
     };
-  }, [observerRef, hasMore, loading, fetchNextPage]);
+  }, [hasMore, loading, fetchNextPage]);
 
   if (!token) {
     return tokenError ? (

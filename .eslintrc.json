@@ -8,6 +8,7 @@
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-inferrable-types": "off",
     "@typescript-eslint/no-implicit-any": "off",
-    "prefer-const": "off"
+    "prefer-const": "off",
+    "@next/next/no-img-element": "off"
   }
 }

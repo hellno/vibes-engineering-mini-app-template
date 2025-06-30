@@ -173,7 +173,7 @@ const useSupabaseUpload = (options: UseSupabaseUploadOptions) => {
         setFiles(newFiles);
       }
     }
-  }, [files.length, setFiles, maxFiles]);
+  }, [files, setFiles, maxFiles]);
 
   return {
     files,
