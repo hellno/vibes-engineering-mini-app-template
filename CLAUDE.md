@@ -43,48 +43,103 @@ The app uses a nested provider pattern in `src/app/providers.tsx`:
 - **`useProfile()`**: User profile management
 - **`useMobile()`**: Mobile device detection
 
-### API Routes Structure
-- **`/api/webhook`**: Handles Farcaster webhook events
-- **`/api/upload`**: Supabase file upload endpoint
-- **`/api/get-jwt`**: JWT token generation for authenticated requests
+### Chain Configuration
+Supports Base, Degen, Mainnet, and Optimism chains via Wagmi configuration in `src/components/providers/WagmiProvider.tsx`.
 
-### Environment Variables Required
-- `NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID`: Project identifier
-- `NEXT_PUBLIC_SUPABASE_URL`: Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase anonymous key
-- `NEXT_PUBLIC_POSTHOG_KEY`: PostHog analytics key (optional)
-- `NEXT_PUBLIC_POSTHOG_HOST`: PostHog host (optional)
-- `VIBES_ENGINEERING_NOTIFICATION_BACKEND_ENDPOINT`: Webhook backend endpoint
+## File Structure and Organization
 
-### File Structure Patterns
+- **App Router**: `src/app/` - Next.js App Router pages and API routes
 - **Components**: `src/components/` - Reusable UI components
-- **UI Components**: `src/components/ui/` - shadcn/ui components
+- **UI Components**: `src/components/ui/` - shadcn/ui components and pre-installed mini app components
 - **Providers**: `src/components/providers/` - Context providers
 - **Hooks**: `src/hooks/` - Custom React hooks
 - **Lib**: `src/lib/` - Utility functions and configurations
-- **App**: `src/app/` - Next.js App Router pages and API routes
 
-### Important Implementation Notes
-- **Mini App SDK**: The `sdk.actions.ready({})` call in `useMiniAppSdk()` is critical - don't remove it
+## Development Guidelines
+
+### Component Development
+- Write client components in `src/components/`
+- Use minimal, self-contained components with clear props
+- Default export components
+- Follow existing patterns in `src/components/`
+- Always satisfy react/no-unescaped-entities: escape special chars in JSX, use &apos; or alternatives
+
+### API Development
+- Write server functions in `src/app/api/`
+- Available routes:
+  - `/api/webhook`: Handles Farcaster webhook events
+  - `/api/upload`: Supabase file upload endpoint
+  - `/api/get-jwt`: JWT token generation for authenticated requests
+- Always create server functions instead of calling external APIs directly from frontend
+
+### Styling
+- Use Tailwind CSS + shadcn/ui components
+- Prioritize mobile-first design (mini apps are primarily mobile)
+- Use inline Tailwind utilities as much as possible
+- Add extra styling libraries sparingly
+
+### Additional Development Notes
 - **Path Alias**: Use `~/` for imports from `src/` directory
-- **Styling**: Follow shadcn/ui patterns and use Tailwind CSS classes
-- **State Management**: Uses React Query for server state, React Context for client state
+- **State Management**: React Query for server state, React Context for client state
 - **Authentication**: Wallet-based auth through Wagmi + Farcaster Frame connector
+- **Mini App SDK**: The `sdk.actions.ready({})` call in `useMiniAppSdk()` is critical - don't remove it
+- **Web3**: Use wagmi v2 and viem for onchain interactions
+- **File Uploads**: Use the `/api/upload` endpoint with Supabase
+- **Provider Structure**: Use existing providers, don't create new top-level providers
 
+## Component Integration Pattern
 
-### Development Workflow
-1. Components should follow existing patterns in `src/components/`
-2. Use the existing provider structure - don't create new top-level providers
-3. File uploads go through the `/api/upload` endpoint with Supabase
-4. All Web3 interactions should use the configured Wagmi setup
-5. Follow the existing TypeScript path aliases (`~/`)
+When creating new components:
+1. Create the component in `src/components/`
+2. Update `src/app/app.tsx` to import and render it
+3. Replace placeholder content between `TEMPLATE_CONTENT_START` and `TEMPLATE_CONTENT_END`
+4. Ensure components are visible and usable by end users
+5. Never leave components unintegrated - creating without showing is incomplete work
 
-### Component Integration Pattern
-**IMPORTANT**: When adding new components or functionality:
-- **DO NOT** modify `src/app/page.tsx` - this is the entry point and rarely needs changes
-- **START** integration in `src/app/app.tsx` - this is the main user-facing component
-- Always ensure new components are properly integrated into the user interface, not just created as isolated files
-- New features should be accessible from the main app flow in `src/app/app.tsx`
+## Protected Files Policy
 
-### Chain Configuration
-Supports Base, Degen, Mainnet, and Optimism chains via Wagmi configuration in `src/components/providers/WagmiProvider.tsx`.
+### DO NOT MODIFY
+- `src/app/page.tsx` - Contains critical mini app infrastructure
+- `src/app/layout.tsx` - Contains essential mini app metadata
+
+### Integration Approach
+- **Primary method**: Always integrate new features in `src/app/app.tsx`
+- **If page.tsx modification is absolutely necessary**:
+  1. Read the existing file first
+  2. Preserve all mini app metadata and scaffolding
+  3. Make only additive changes within existing structure
+  4. Never replace entire page content
+
+## Pre-installed Components
+
+All mini-app UI components are pre-installed in `~/components/ui/`:
+- `daimo-pay-transfer-button`: Custom button for transferring tokens with Daimo Pay
+- `share-cast-button`: Button for sharing a cast on Farcaster
+- `add-miniapp-button`: Button to add or pin a mini app
+- `show-coin-balance`: Display coin balance for an address using Alchemy SDK
+- `avatar`: Customizable avatar component with fallbacks
+- `user-context`: Display user information with avatar and username
+- `nft-card`: Versatile NFT display with multi-chain support
+- `profile-search`: Search Farcaster users with Neynar API
+- `nft-mint-flow`: Universal NFT minting component with auto-detection
+- `button`, `input`, `card`, `sheet`: Base UI components from shadcn/ui
+
+Import using: `import { ComponentName } from "~/components/ui/component-name"`
+
+## Environment Variables
+
+Required:
+- `NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID`: Project identifier
+- `NEXT_PUBLIC_SUPABASE_URL`: Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase anonymous key
+- `VIBES_ENGINEERING_NOTIFICATION_BACKEND_ENDPOINT`: Webhook backend endpoint
+
+Optional:
+- `NEXT_PUBLIC_POSTHOG_KEY`: PostHog analytics key
+- `NEXT_PUBLIC_POSTHOG_HOST`: PostHog host
+
+## Git Commit Guidelines
+
+- Ignore `.pnpm-deps-hash` changes (auto-generated)
+- Use `git checkout HEAD .pnpm-deps-hash` before committing
+- Only commit actual code changes
