@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { Input } from "~/components/ui/input";
 import { Alchemy, Network } from "alchemy-sdk";
