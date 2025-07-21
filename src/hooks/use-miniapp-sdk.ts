@@ -1,14 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import sdk from "@farcaster/frame-sdk";
-import type { Context } from "@farcaster/frame-core";
+import sdk from "@farcaster/miniapp-sdk";
 
 export function useMiniAppSdk() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
 
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
-  const [context, setContext] = useState<Context.FrameContext>();
+  const [context, setContext] = useState<any>();
   const [isMiniAppSaved, setIsMiniAppSaved] = useState(false);
   const [lastEvent, setLastEvent] = useState("");
   const [pinFrameResponse, setPinFrameResponse] = useState("");
@@ -17,19 +16,19 @@ export function useMiniAppSdk() {
   useEffect(() => {
     if (!sdk) return;
 
-    sdk.on("frameAdded", ({ notificationDetails }) => {
+    sdk.on("miniAppAdded", ({ notificationDetails }) => {
       setLastEvent(
-        `frameAdded${notificationDetails ? ", notifications enabled" : ""}`,
+        `miniAppAdded${notificationDetails ? ", notifications enabled" : ""}`,
       );
       setIsMiniAppSaved(true);
     });
 
-    sdk.on("frameAddRejected", ({ reason }) => {
-      setLastEvent(`frameAddRejected, reason ${reason}`);
+    sdk.on("miniAppAddRejected", ({ reason }) => {
+      setLastEvent(`miniAppAddRejected, reason ${reason}`);
     });
 
-    sdk.on("frameRemoved", () => {
-      setLastEvent("frameRemoved");
+    sdk.on("miniAppRemoved", () => {
+      setLastEvent("miniAppRemoved");
       setIsMiniAppSaved(false);
     });
 

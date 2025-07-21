@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Home, MoreHorizontal, User, X } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import sdk from "@farcaster/frame-sdk";
+import sdk from "@farcaster/miniapp-sdk";
 
 import { Button } from "~/components/ui/button";
 import {

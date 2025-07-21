@@ -17,7 +17,7 @@ import {
   useSwitchChain,
 } from "wagmi";
 import { formatEther, type Address } from "viem";
-import { farcasterFrame } from "@farcaster/frame-wagmi-connector";
+import { farcasterMiniApp } from "@farcaster/miniapp-wagmi-connector";
 import {
   Coins,
   CheckCircle,
@@ -434,7 +434,7 @@ export function NFTMintButton({
   const handleConnectWallet = async () => {
     try {
       dispatch({ type: "CONNECT_START" });
-      const connector = farcasterFrame();
+      const connector = farcasterMiniApp();
       connect({ connector });
     } catch (err) {
       handleError(err, "Failed to connect wallet");
