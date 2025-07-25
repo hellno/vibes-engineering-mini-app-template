@@ -34,8 +34,8 @@ import {
   ipfsToHttp 
 } from "~/lib/nft-standards";
 import { 
-  getTokenURIWithManifoldSupport 
-} from "~/lib/manifold-utils";
+  getTokenMetadataURL 
+} from "~/lib/nft-metadata-utils";
 
 // Base64 placeholder image
 const PLACEHOLDER_IMAGE =
@@ -216,8 +216,8 @@ export function NFTCard({
             }
           }
 
-          // Get tokenURI with automatic Manifold support
-          let metadataUrl = await getTokenURIWithManifoldSupport(
+          // Get tokenURI with comprehensive metadata support
+          let metadataUrl = await getTokenMetadataURL(
             client,
             getAddress(contractAddress) as Address,
             tokenId

@@ -15,6 +15,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Testing
 - No specific test framework is configured - check with the user before adding tests
 
+### Git Operations
+- When committing, exclude `.pnpm-deps-hash` changes: `git checkout HEAD .pnpm-deps-hash`
+- To sync with upstream Farcaster template: `git fetch upstream && git merge upstream/main`
+
 ## Architecture Overview
 
 This is a **Farcaster Mini App template** built with Next.js 15, React 19, TypeScript, and Tailwind CSS. It's designed for building mini applications that run within the Farcaster ecosystem.
@@ -38,13 +42,19 @@ The app uses a nested provider pattern in `src/app/providers.tsx`:
 5. **DaimoPayProvider**: Payment processing
 
 ### Key Hooks and Utilities
-- **`useMiniAppSdk()`**: Primary hook for Farcaster Mini App SDK integration
-- **`useSupabaseUpload()`**: File upload functionality
+- **`useMiniAppSdk()`**: Primary hook for Farcaster Mini App SDK integration (formerly `useFrameSDK`)
+- **`useSupabaseUpload()`**: File upload functionality with Supabase storage
 - **`useProfile()`**: User profile management
 - **`useMobile()`**: Mobile device detection
+- **`useToast()`**: Toast notification system
 
 ### Chain Configuration
-Supports Base, Degen, Mainnet, and Optimism chains via Wagmi configuration in `src/components/providers/WagmiProvider.tsx`.
+Supports Base, Degen, Mainnet, Optimism, and Celo chains via Wagmi configuration in `src/components/providers/WagmiProvider.tsx`.
+
+### Key Libraries and APIs
+- **Alchemy SDK**: For blockchain data and NFT operations
+- **Neynar SDK**: For Farcaster user search and profiles
+- **Daimo Pay**: For payment processing within mini apps
 
 ## File Structure and Organization
 
@@ -71,6 +81,7 @@ Supports Base, Degen, Mainnet, and Optimism chains via Wagmi configuration in `s
   - `/api/upload`: Supabase file upload endpoint
   - `/api/get-jwt`: JWT token generation for authenticated requests
 - Always create server functions instead of calling external APIs directly from frontend
+- Use Route Handlers pattern with `route.ts` files
 
 ### Styling
 - Use Tailwind CSS + shadcn/ui components
@@ -120,11 +131,20 @@ All mini-app UI components are pre-installed in `~/components/ui/`:
 - `avatar`: Customizable avatar component with fallbacks
 - `user-context`: Display user information with avatar and username
 - `nft-card`: Versatile NFT display with multi-chain support
-- `profile-search`: Search Farcaster users with Neynar API
+- `nft-mint-button`: NFT minting button with provider auto-detection
 - `nft-mint-flow`: Universal NFT minting component with auto-detection
+- `profile-search`: Search Farcaster users with Neynar API
+- `onchain-user-search`: Search onchain users with ENS and wallet addresses
 - `button`, `input`, `card`, `sheet`: Base UI components from shadcn/ui
 
 Import using: `import { ComponentName } from "~/components/ui/component-name"`
+
+### Additional Components
+- `FileUpload` / `FileUploadCard`: Supabase file upload components
+- `BucketExplorer`: Browse files in Supabase storage buckets
+- `Dropzone`: Drag-and-drop file upload UI
+- `VisitorCounter`: Track and display visitor counts
+- `ExampleComponents`: Demonstration of all available components
 
 ## Environment Variables
 
@@ -137,6 +157,29 @@ Required:
 Optional:
 - `NEXT_PUBLIC_POSTHOG_KEY`: PostHog analytics key
 - `NEXT_PUBLIC_POSTHOG_HOST`: PostHog host
+- `NEXT_PUBLIC_ALCHEMY_KEY`: Alchemy API key for enhanced blockchain operations
+
+## Critical Implementation Notes
+
+### Mini App SDK Integration
+- The `sdk.actions.ready({})` call in `useMiniAppSdk()` is essential - removing it will break the mini app
+- Always check `isSDKLoaded` before using SDK features
+- The SDK provides context about the current Farcaster user and environment
+
+### NFT Operations
+- NFT minting uses auto-detection via `provider-detector.ts` and `nft-standards.ts`
+- Supports multiple providers: Manifold, Zora, Rodeo, Base, and custom contracts
+- Price optimization handled by `price-optimizer.ts`
+- Metadata utilities in `nft-metadata-utils.ts` for fetching NFT details
+
+### Supabase Integration
+- File uploads require valid Supabase credentials in environment variables
+- Use `useSupabaseUpload()` hook for upload functionality
+- Storage buckets can be explored with the `BucketExplorer` component
+
+### Webhook Handling
+- Webhook endpoint at `/api/webhook` processes Farcaster events
+- Requires `VIBES_ENGINEERING_NOTIFICATION_BACKEND_ENDPOINT` for notifications
 
 ## Git Commit Guidelines
 

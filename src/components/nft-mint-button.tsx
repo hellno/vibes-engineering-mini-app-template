@@ -17,7 +17,7 @@ import {
   useSwitchChain,
 } from "wagmi";
 import { formatEther, type Address } from "viem";
-import { farcasterMiniApp } from "@farcaster/miniapp-wagmi-connector";
+import { farcasterFrame } from "@farcaster/miniapp-wagmi-connector";
 import {
   Coins,
   CheckCircle,
@@ -34,6 +34,7 @@ import {
   validateParameters,
   getClientForChain,
 } from "~/lib/provider-detector";
+import { getChainById } from "~/lib/chains";
 import { getProviderConfig } from "~/lib/provider-configs";
 import { fetchPriceData } from "~/lib/price-optimizer";
 import { mintReducer, initialState, type MintStep } from "~/lib/mint-reducer";
@@ -78,10 +79,9 @@ type NFTMintFlowProps = {
 
   /**
    * Blockchain network ID
-   * - 1 = Ethereum mainnet
-   * - 8453 = Base mainnet
+   * Supports any valid chain ID
    */
-  chainId: 1 | 8453;
+  chainId: number;
 
   /**
    * Optional provider hint. Use when:
@@ -237,12 +237,13 @@ export function NFTMintButton({
 
   // Get provider config
   const providerConfig = contractInfo
-    ? getProviderConfig(contractInfo.provider)
+    ? getProviderConfig(contractInfo.provider, contractInfo)
     : null;
 
   // Check if user is on the correct network
   const isCorrectNetwork = chain?.id === chainId;
-  const networkName = chainId === 1 ? "Ethereum" : chainId === 8453 ? "Base" : "Unknown";
+  const targetChain = getChainById(chainId);
+  const networkName = targetChain.name || "Unknown";
 
   // Handle transaction status updates
   React.useEffect(() => {
@@ -434,7 +435,7 @@ export function NFTMintButton({
   const handleConnectWallet = async () => {
     try {
       dispatch({ type: "CONNECT_START" });
-      const connector = farcasterMiniApp();
+      const connector = farcasterFrame();
       connect({ connector });
     } catch (err) {
       handleError(err, "Failed to connect wallet");
@@ -1019,7 +1020,7 @@ NFTMintButton.presets = {
    */
   generic: (props: {
     contractAddress: Address;
-    chainId: 1 | 8453;
+    chainId: number;
     amount?: number;
     buttonText?: string;
     onMintSuccess?: (txHash: string) => void;
@@ -1043,7 +1044,7 @@ NFTMintButton.presets = {
    */
   manifold: (props: {
     contractAddress: Address;
-    chainId: 1 | 8453;
+    chainId: number;
     instanceId: string;
     tokenId?: string;
     amount?: number;
@@ -1076,7 +1077,7 @@ NFTMintButton.presets = {
    */
   auto: (props: {
     contractAddress: Address;
-    chainId: 1 | 8453;
+    chainId: number;
     amount?: number;
     buttonText?: string;
     onMintSuccess?: (txHash: string) => void;
