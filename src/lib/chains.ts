@@ -17,7 +17,7 @@ export const SUPPORTED_CHAINS = [
   { id: 137, chain: chains.polygon, alchemyPrefix: "polygon-mainnet" },
   { id: 11155111, chain: chains.sepolia, alchemyPrefix: "eth-sepolia" },
   { id: 7777777, chain: chains.zora, alchemyPrefix: "zora-mainnet" },
-  { id: 130, chain: chains.ham, alchemyPrefix: "unichain-mainnet" }, // Unichain
+  { id: 130, chain: chains.unichain, alchemyPrefix: "unichain-mainnet" },
   {
     id: 10143,
     chain: {
@@ -76,7 +76,7 @@ export function getPublicClient(chainId: number): PublicClient {
  */
 export function findChainByName(networkName: string): Chain | undefined {
   const normalizedName = networkName.toLowerCase().trim();
-  
+
   // Direct name mappings
   const nameToId: Record<string, number> = {
     ethereum: 1,
@@ -95,12 +95,11 @@ export function findChainByName(networkName: string): Chain | undefined {
     "ethereum sepolia": 11155111,
     zora: 7777777,
     unichain: 130,
-    ham: 130,
     "monad testnet": 10143,
     monad: 10143,
     celo: 42220,
   };
-  
+
   const chainId = nameToId[normalizedName];
   return chainId ? getChainById(chainId) : undefined;
 }
