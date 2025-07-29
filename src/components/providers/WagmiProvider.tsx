@@ -1,5 +1,12 @@
 import { createConfig, http, injected, WagmiProvider } from "wagmi";
-import { base, celo, degen, mainnet, optimism } from "wagmi/chains";
+import {
+  arbitrum,
+  base,
+  celo,
+  mainnet,
+  optimism,
+  monadTestnet,
+} from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { farcasterMiniApp } from "@farcaster/miniapp-wagmi-connector";
 import { DaimoPayProvider, getDefaultConfig } from "@daimo/pay";
@@ -10,9 +17,14 @@ const alchemyApiKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
 export const config = createConfig(
   getDefaultConfig({
     appName: PROJECT_TITLE,
-    chains: [base, degen, mainnet, optimism, celo],
+    chains: [base, arbitrum, optimism, celo, mainnet, monadTestnet],
     additionalConnectors: [farcasterMiniApp(), injected()],
     transports: {
+      [arbitrum.id]: http(
+        alchemyApiKey
+          ? `https://arb-mainnet.g.alchemy.com/v2/${alchemyApiKey}`
+          : undefined,
+      ),
       [base.id]: http(
         alchemyApiKey
           ? `https://base-mainnet.g.alchemy.com/v2/${alchemyApiKey}`
