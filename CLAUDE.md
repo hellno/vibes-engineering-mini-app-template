@@ -49,7 +49,7 @@ The app uses a nested provider pattern in `src/app/providers.tsx`:
 - **`useToast()`**: Toast notification system
 
 ### Chain Configuration
-Supports Base, Degen, Mainnet, Optimism, and Celo chains via Wagmi configuration in `src/components/providers/WagmiProvider.tsx`.
+Supports Base, Arbitrum, Optimism, Celo, Mainnet, and Monad Testnet chains via Wagmi configuration in `src/components/providers/WagmiProvider.tsx`.
 
 ### Key Libraries and APIs
 - **Alchemy SDK**: For blockchain data and NFT operations
