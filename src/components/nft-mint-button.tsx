@@ -202,14 +202,14 @@ export function NFTMintButton({
       !manifoldParams?.tokenId
     ) {
       console.error(
-        "NFTMintButton: When forceProvider=\manifold\, you must provide manifoldParams with either instanceId or tokenId." +
-          "Example: manifoldParams={{ instanceId: \4293509360\ }}",
+        "NFTMintButton: When forceProvider='manifold', you must provide manifoldParams with either instanceId or tokenId. " +
+          "Example: manifoldParams={{ instanceId: '4293509360' }}",
       );
     }
 
     if (manifoldParams && forceProvider && forceProvider !== "manifold") {
       console.warn(
-        "NFTMintButton: manifoldParams provided but forceProvider is not \manifold\." +
+        "NFTMintButton: manifoldParams provided but forceProvider is not 'manifold'. " +
           "These params will be ignored for non-Manifold providers.",
       );
     }
