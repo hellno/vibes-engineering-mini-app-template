@@ -12,6 +12,9 @@
   "dependencies": {
     "@daimo/contract": "^1.6.0",
     "@daimo/pay": "^1.13.0",
+    "@farcaster/frame-core": "^0.3.7",
+    "@farcaster/frame-sdk": "^0.1.8",
+    "@farcaster/frame-wagmi-connector": "^1.0.0",
     "@farcaster/miniapp-core": "^0.3.6",
     "@farcaster/miniapp-sdk": "^0.1.7",
     "@farcaster/miniapp-wagmi-connector": "^1.0.0",
