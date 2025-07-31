@@ -31,11 +31,6 @@ jobs:
 
     - name: Run build
       run: pnpm build
-      env:
-        NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID || 'dummy-project-id' }}
-        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://dummy.supabase.co' }}
-        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy-anon-key' }}
-        VIBES_ENGINEERING_NOTIFICATION_BACKEND_ENDPOINT: ${{ secrets.VIBES_ENGINEERING_NOTIFICATION_BACKEND_ENDPOINT || 'https://dummy-endpoint.com' }}
 
     - name: Run lint
       run: pnpm lint
