@@ -48,21 +48,21 @@ jobs:
           // For manual test mode, return sample errors
           if ('${{ github.event_name }}' === 'workflow_dispatch' && '${{ inputs.test_mode }}' === 'true') {
             console.log('Running in test mode with sample errors');
-            return `
---- Build/Lint Output ---
-
-src/components/ui/button.tsx:10:5 - error TS2322: Type 'string' is not assignable to type 'number'.
-  10     const count: number = "0";
-         ~~~~~
-
-src/hooks/useMobile.ts:15:10 - error TS2305: Module '"react"' has no exported member 'useWrongHook'.
-  15  import { useWrongHook } from 'react';
-              ~~~~~~~~~~~~
-
-src/app/app.tsx:25:3  error  'unusedVariable' is assigned a value but never used  @typescript-eslint/no-unused-vars
-
-ERROR: Failed to compile.
-            `;
+            return [
+              '--- Build/Lint Output ---',
+              '',
+              'src/components/ui/button.tsx:10:5 - error TS2322: Type \'string\' is not assignable to type \'number\'.',
+              '  10     const count: number = "0";',
+              '         ~~~~~',
+              '',
+              'src/hooks/useMobile.ts:15:10 - error TS2305: Module \'"react"\' has no exported member \'useWrongHook\'.',
+              '  15  import { useWrongHook } from \'react\';',
+              '              ~~~~~~~~~~~~',
+              '',
+              'src/app/app.tsx:25:3  error  \'unusedVariable\' is assigned a value but never used  @typescript-eslint/no-unused-vars',
+              '',
+              'ERROR: Failed to compile.'
+            ].join('\n');
           }
           
           // For workflow_run trigger, get actual logs
