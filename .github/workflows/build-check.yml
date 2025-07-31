@@ -2,153 +2,40 @@ name: Build Check
 
 on:
   push:
-    branches: ["**"]
+    branches: [ main ]
   pull_request:
-    types: [opened, synchronize]
+    branches: [ main ]
 
 jobs:
   build:
-    # Skip if commit already has [auto-fix] to prevent loops
-    if: ${{ !contains(github.event.head_commit.message || '', '[auto-fix]') }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      actions: read
+
+    strategy:
+      matrix:
+        node-version: [20.x]
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
+    - uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "pnpm"
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+    - name: Install dependencies
+      run: pnpm install --no-frozen-lockfile
 
-      - name: Try to build and lint
-        id: build_check
-        run: |
-          BUILD_SUCCESS=true
-          LINT_SUCCESS=true
+    - name: Run build
+      run: pnpm build
+      env:
+        NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID || 'dummy-project-id' }}
+        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://dummy.supabase.co' }}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy-anon-key' }}
+        VIBES_ENGINEERING_NOTIFICATION_BACKEND_ENDPOINT: ${{ secrets.VIBES_ENGINEERING_NOTIFICATION_BACKEND_ENDPOINT || 'https://dummy-endpoint.com' }}
 
-          echo "::group::Running build"
-          if pnpm build; then
-            echo "✅ Build passed"
-          else
-            BUILD_SUCCESS=false
-            echo "❌ Build failed"
-          fi
-          echo "::endgroup::"
-
-          echo "::group::Running lint"
-          if pnpm lint; then
-            echo "✅ Lint passed"
-          else
-            LINT_SUCCESS=false
-            echo "❌ Lint failed"
-          fi
-          echo "::endgroup::"
-
-          # Set outputs
-          echo "build_success=$BUILD_SUCCESS" >> $GITHUB_OUTPUT
-          echo "lint_success=$LINT_SUCCESS" >> $GITHUB_OUTPUT
-
-          # Overall check
-          if [[ "$BUILD_SUCCESS" == "true" ]] && [[ "$LINT_SUCCESS" == "true" ]]; then
-            echo "all_passed=true" >> $GITHUB_OUTPUT
-            echo "✅ All checks passed!"
-          else
-            echo "all_passed=false" >> $GITHUB_OUTPUT
-            echo "❌ Some checks failed, will attempt auto-fix"
-          fi
-        continue-on-error: true
-        env:
-          NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID || 'dummy-project-id' }}
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://dummy.supabase.co' }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy-anon-key' }}
-          VIBES_ENGINEERING_NOTIFICATION_BACKEND_ENDPOINT: ${{ secrets.VIBES_ENGINEERING_NOTIFICATION_BACKEND_ENDPOINT || 'https://dummy-endpoint.com' }}
-
-      - name: Get commit context for Claude
-        if: steps.build_check.outputs.all_passed != 'true'
-        run: |
-          echo "Getting context about what changed..."
-          if git rev-parse HEAD~1 >/dev/null 2>&1; then
-            echo "Recent changes:" > commit_context.txt
-            git log -1 --pretty=format:"Last commit: %s by %an" >> commit_context.txt
-            echo -e "\n\nFiles changed:" >> commit_context.txt
-            git diff HEAD~1 HEAD --name-only >> commit_context.txt
-          else
-            echo "First commit on branch" > commit_context.txt
-          fi
-
-      - name: Auto-fix with Claude
-        if: steps.build_check.outputs.all_passed != 'true'
-        uses: anthropics/claude-code-action@beta
-        with:
-          direct_prompt: |
-            The build or lint failed. Check commit_context.txt to see what recently changed.
-
-            Run 'pnpm build' and 'pnpm lint' to identify the specific errors.
-            Fix any TypeScript errors, ESLint violations, or import issues you find.
-
-            Make minimal changes - only fix what's broken. Don't refactor or improve unrelated code.
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          mode: agent
-          max_turns: 15
-          timeout_minutes: 10
-
-      - name: Verify fixes
-        if: steps.build_check.outputs.all_passed != 'true'
-        id: verify
-        run: |
-          echo "Verifying fixes..."
-          if pnpm build && pnpm lint; then
-            echo "✅ Build and lint now pass!"
-            echo "fixes_verified=true" >> $GITHUB_OUTPUT
-          else
-            echo "❌ Still failing after auto-fix attempt"
-            echo "fixes_verified=false" >> $GITHUB_OUTPUT
-            exit 1
-          fi
-        env:
-          NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_VIBES_ENGINEERING_PROJECT_ID || 'dummy-project-id' }}
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://dummy.supabase.co' }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy-anon-key' }}
-          VIBES_ENGINEERING_NOTIFICATION_BACKEND_ENDPOINT: ${{ secrets.VIBES_ENGINEERING_NOTIFICATION_BACKEND_ENDPOINT || 'https://dummy-endpoint.com' }}
-
-      - name: Commit and push fixes
-        if: steps.build_check.outputs.all_passed != 'true' && steps.verify.outputs.fixes_verified == 'true'
-        run: |
-          if [[ -n $(git diff --stat) ]]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add -A
-            git commit -m "fix: auto-fix build errors [auto-fix]
-
-            Automated fix for build/lint failures"
-            git push
-
-            echo "✅ Pushed fixes to branch"
-          fi
-
-      - name: Final status
-        if: always()
-        run: |
-          if [[ "${{ steps.build_check.outputs.all_passed }}" == "true" ]]; then
-            echo "✅ Original build passed - no fixes needed"
-          elif [[ "${{ steps.verify.outputs.fixes_verified }}" == "true" ]]; then
-            echo "✅ Build was broken but has been automatically fixed"
-          else
-            echo "❌ Build is broken and could not be automatically fixed"
-            exit 1
-          fi
+    - name: Run lint
+      run: pnpm lint
