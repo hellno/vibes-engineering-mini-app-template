@@ -5,6 +5,8 @@ on:
     workflows: ["Build Check"]
     types:
       - completed
+    branches:
+      - main  # This workflow must be on main branch to be triggered
   workflow_dispatch:
     inputs:
       test_mode:
@@ -14,6 +16,11 @@ on:
         default: false
       branch:
         description: 'Branch to fix (for manual testing)'
+        required: false
+        type: string
+        default: ''
+      workflow_run_id:
+        description: 'Specific workflow run ID to fix (optional)'
         required: false
         type: string
         default: ''
@@ -76,9 +83,13 @@ jobs:
             return '${{ steps.test_errors.outputs.ERRORS_OUTPUT }}';
           }
           
-          // For workflow_run trigger, get actual logs
-          if ('${{ github.event_name }}' === 'workflow_run') {
-            const runId = parseInt('${{ github.event.workflow_run.id }}');
+          // For workflow_run trigger OR manual with workflow_run_id
+          if ('${{ github.event_name }}' === 'workflow_run' || '${{ inputs.workflow_run_id }}') {
+            const runId = '${{ inputs.workflow_run_id }}' ? 
+              parseInt('${{ inputs.workflow_run_id }}') : 
+              parseInt('${{ github.event.workflow_run.id }}');
+            
+            console.log(`Getting logs for workflow run ID: ${runId}`);
             
             const { data: { jobs } } = await github.rest.actions.listJobsForWorkflowRun({
               owner: context.repo.owner,

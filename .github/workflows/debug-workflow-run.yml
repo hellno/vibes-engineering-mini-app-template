@@ -1,0 +1,21 @@
+name: Debug Workflow Run
+
+on:
+  workflow_run:
+    workflows: ["Build Check"]
+    types:
+      - completed
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Debug workflow run event
+      run: |
+        echo "Event name: ${{ github.event_name }}"
+        echo "Workflow run conclusion: ${{ github.event.workflow_run.conclusion }}"
+        echo "Workflow run name: ${{ github.event.workflow_run.name }}"
+        echo "Workflow run head branch: ${{ github.event.workflow_run.head_branch }}"
+        echo "Workflow run event: ${{ github.event.workflow_run.event }}"
+        echo "Is main branch: ${{ github.event.workflow_run.head_branch == 'main' }}"
+        echo "Should trigger auto-fix: ${{ github.event.workflow_run.conclusion == 'failure' && github.event.workflow_run.head_branch != 'main' }}"
