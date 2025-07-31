@@ -3,265 +3,77 @@ name: Auto Fix Build Errors
 on:
   workflow_run:
     workflows: ["Build Check"]
-    types:
-      - completed
+    types: [completed]
   workflow_dispatch:
-    inputs:
-      test_mode:
-        description: 'Run in test mode with sample errors'
-        required: false
-        type: boolean
-        default: false
-      branch:
-        description: 'Branch to fix (for manual testing)'
-        required: false
-        type: string
-        default: ''
 
 permissions:
   contents: write
   pull-requests: write
-  issues: write
 
 jobs:
-  fix-build-errors:
-    # Run if: build failed (not on main) OR manual trigger
+  auto-fix:
+    # Only run if: (build failed and not auto-fix) OR manual trigger
     if: |
-      (github.event_name == 'workflow_run' && 
-       github.event.workflow_run.conclusion == 'failure' && 
-       github.event.workflow_run.head_branch != 'main') ||
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.conclusion == 'failure' &&
+       !contains(github.event.workflow_run.head_commit.message, '[auto-fix]')) ||
       github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event_name == 'workflow_dispatch' && (inputs.branch || github.ref) || github.event.workflow_run.head_branch }}
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || github.event.workflow_run.head_branch }}
+          fetch-depth: 2 # Get last 2 commits for context
 
-    - name: Get build error logs
-      id: get_logs
-      uses: actions/github-script@v7
-      with:
-        script: |
-          // For manual test mode, return sample errors
-          if ('${{ github.event_name }}' === 'workflow_dispatch' && '${{ inputs.test_mode }}' === 'true') {
-            console.log('Running in test mode with sample errors');
-            return [
-              '--- Build/Lint Output ---',
-              '',
-              'src/components/ui/button.tsx:10:5 - error TS2322: Type \'string\' is not assignable to type \'number\'.',
-              '  10     const count: number = "0";',
-              '         ~~~~~',
-              '',
-              'src/hooks/useMobile.ts:15:10 - error TS2305: Module \'"react"\' has no exported member \'useWrongHook\'.',
-              '  15  import { useWrongHook } from \'react\';',
-              '              ~~~~~~~~~~~~',
-              '',
-              'src/app/app.tsx:25:3  error  \'unusedVariable\' is assigned a value but never used  @typescript-eslint/no-unused-vars',
-              '',
-              'ERROR: Failed to compile.'
-            ].join('\n');
-          }
+      - name: Get last commit info
+        id: last_commit
+        run: |
+          echo "Last commit that triggered the build failure:"
+          git log -1 --pretty=format:"Author: %an%nMessage: %s%nChanges:"
           
-          // For workflow_run trigger, get actual logs
-          if ('${{ github.event_name }}' === 'workflow_run') {
-            const { data: { jobs } } = await github.rest.actions.listJobsForWorkflowRun({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: ${{ github.event.workflow_run.id }}
-            });
+          # Handle case where there's only one commit
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            git diff HEAD~1 HEAD --stat
             
-            const failedJob = jobs.find(job => job.conclusion === 'failure');
-            if (!failedJob) {
-              console.log('No failed job found');
-              return '';
-            }
-            
-            console.log(`Found failed job: ${failedJob.name}`);
-            
-            // Download the logs
-            const response = await github.request('GET /repos/{owner}/{repo}/actions/jobs/{job_id}/logs', {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              job_id: failedJob.id,
-              headers: {
-                Accept: 'application/vnd.github+json'
-              }
-            });
-            
-            const logs = response.data;
-            
-            // Extract relevant error messages
-            const lines = logs.split('\n');
-            const errorLines = [];
-            let capturing = false;
-            let inBuildSection = false;
-            
-            for (const line of lines) {
-              // Detect build/lint sections
-              if (line.includes('Run pnpm build') || line.includes('Run pnpm lint')) {
-                capturing = true;
-                inBuildSection = true;
-                errorLines.push('\n--- Build/Lint Output ---\n');
-              }
-              
-              // Capture TypeScript errors
-              if (capturing && line.match(/error TS\d+:/)) {
-                errorLines.push(line);
-              }
-              
-              // Capture ESLint errors
-              if (capturing && line.match(/\d+:\d+\s+error/)) {
-                errorLines.push(line);
-              }
-              
-              // Capture Next.js build errors
-              if (capturing && (line.includes('Error:') || line.includes('ERROR'))) {
-                errorLines.push(line);
-              }
-              
-              // Capture general error indicators
-              if (line.includes('##[error]')) {
-                errorLines.push(line.replace('##[error]', 'ERROR:'));
-              }
-              
-              // Stop capturing after the section
-              if (inBuildSection && line.match(/##\[group\]/) && !line.includes('Run pnpm')) {
-                inBuildSection = false;
-              }
-            }
-            
-            const relevantErrors = errorLines.slice(-100).join('\n'); // Last 100 error lines
-            
-            if (!relevantErrors.trim()) {
-              console.log('No specific errors found in logs');
-              return 'Build failed but no specific error messages were captured.';
-            }
-            
-            return relevantErrors;
-          }
-          
-          // For manual trigger without test mode, check current build
-          console.log('Manual trigger - running build to check for errors');
-          return 'Manual trigger - please check build output';
+            # Save commit info for Claude
+            git log -1 --pretty=format:"The build failed after this commit:%n%nAuthor: %an%nMessage: %s%n" > commit_context.txt
+            echo -e "\nFiles changed:" >> commit_context.txt
+            git diff HEAD~1 HEAD --name-only >> commit_context.txt
+          else
+            echo "This is the first commit on the branch"
+            git log -1 --pretty=format:"The build failed on this first commit:%n%nAuthor: %an%nMessage: %s%n" > commit_context.txt
+            echo -e "\nAll files in this commit:" >> commit_context.txt
+            git ls-tree --name-only -r HEAD >> commit_context.txt
+          fi
 
-    - name: Create error context file
-      if: steps.get_logs.outputs.result != ''
-      run: |
-        cat > error_context.md << 'EOF'
-        # Build Error Context
-        
-        The build failed with the following errors:
-        
-        ```
-        ${{ steps.get_logs.outputs.result }}
-        ```
-        
-        Please analyze these errors and fix them following these requirements:
-        1. Only fix the specific errors shown above
-        2. Make minimal changes - do not refactor or improve unrelated code
-        3. Preserve the existing code style and patterns
-        4. Focus on TypeScript errors, ESLint violations, and import issues
-        5. After making fixes, run 'pnpm build' and 'pnpm lint' to verify
-        
-        The project uses:
-        - Next.js 15 with App Router
-        - React 19 with TypeScript
-        - Tailwind CSS
-        - pnpm as package manager
-        
-        Fix the errors and ensure the build passes.
-        EOF
+      - name: Fix build errors with Claude
+        uses: anthropics/claude-code-action@beta
+        with:
+          prompt: |
+            The build is failing. Based on the recent commit changes in commit_context.txt,
+            identify and fix any TypeScript errors, ESLint violations, or import issues.
 
-    - name: Run Claude Code to fix errors
-      if: steps.get_logs.outputs.result != ''
-      uses: anthropics/claude-code-action@beta
-      with:
-        prompt_file: error_context.md
-        anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-        # Alternative: If using OAuth token from Claude Pro/Max
-        # claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-        max_turns: 3
-        timeout_minutes: 10
-        mode: agent  # Use agent mode for automated fixes without trigger checking
+            Run 'pnpm build' and 'pnpm lint' to verify your fixes work.
+            Make minimal changes - only fix what's broken.
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          mode: agent
+          max_turns: 20
+          timeout_minutes: 10
 
-    - name: Check if changes were made
-      id: check_changes
-      run: |
-        if [[ -n $(git status --porcelain) ]]; then
-          echo "changes=true" >> $GITHUB_OUTPUT
-          echo "Changed files:"
-          git status --porcelain
-        else
-          echo "changes=false" >> $GITHUB_OUTPUT
-          echo "No changes were made"
-        fi
+      - name: Commit and push if changes exist
+        run: |
+          if [[ -n $(git diff --stat) ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "fix: build errors [auto-fix]
 
-    - name: Commit and push fixes
-      if: steps.check_changes.outputs.changes == 'true'
-      run: |
-        git config --local user.email "github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
-        
-        # Stage all changes
-        git add -A
-        
-        # Create commit message
-        git commit -m "fix: auto-fix build errors with Claude Code
+            Automated fix triggered by workflow run #${{ github.event.workflow_run.run_number }}"
+            git push
 
-        Automated fix for build errors detected in workflow run #${{ github.event.workflow_run.run_number }}
-        
-        Fixed by Claude Code Action based on build failure analysis."
-        
-        # Push changes
-        git push
-
-    - name: Comment on PR if applicable
-      if: |
-        steps.check_changes.outputs.changes == 'true' && 
-        github.event.workflow_run.event == 'pull_request'
-      uses: actions/github-script@v7
-      with:
-        script: |
-          // Find PRs associated with this branch
-          const { data: pulls } = await github.rest.pulls.list({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            state: 'open',
-            head: `${context.repo.owner}:${context.payload.workflow_run.head_branch}`
-          });
-          
-          if (pulls.length > 0) {
-            const pr = pulls[0];
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: pr.number,
-              body: `🤖 **Claude Code Auto-Fix**
-              
-I've automatically fixed the build errors in this PR. The changes have been pushed to the branch.
-
-**Fixed issues:**
-- TypeScript compilation errors
-- ESLint violations  
-- Import/export issues
-
-Please review the changes to ensure they align with your intentions.
-
-*Triggered by failed workflow run [#${{ github.event.workflow_run.run_number }}](${{ github.event.workflow_run.html_url }})*`
-            });
-          }
-
-    - name: Handle no changes scenario
-      if: |
-        steps.check_changes.outputs.changes == 'false' && 
-        steps.get_logs.outputs.result != ''
-      run: |
-        echo "Claude Code analyzed the errors but couldn't automatically fix them."
-        echo "This might require manual intervention for:"
-        echo "- Complex architectural changes"
-        echo "- Missing dependencies"
-        echo "- Environment configuration issues"
-        exit 1
+            echo "✅ Pushed fixes to ${{ github.event.workflow_run.head_branch }}"
+          else
+            echo "❌ No changes made - Claude couldn't fix the errors automatically"
+            exit 1
+          fi
