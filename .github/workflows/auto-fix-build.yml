@@ -12,16 +12,18 @@ permissions:
 
 jobs:
   auto-fix:
-    # Only run if build failed and last commit wasn't an auto-fix
+    # Only run if: (build failed and not auto-fix) OR manual trigger
     if: |
-      github.event.workflow_run.conclusion == 'failure' &&
-      !contains(github.event.workflow_run.head_commit.message, '[auto-fix]')
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.conclusion == 'failure' &&
+       !contains(github.event.workflow_run.head_commit.message, '[auto-fix]')) ||
+      github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_branch }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || github.event.workflow_run.head_branch }}
           fetch-depth: 2 # Get last 2 commits for context
 
       - name: Get last commit info
@@ -29,12 +31,21 @@ jobs:
         run: |
           echo "Last commit that triggered the build failure:"
           git log -1 --pretty=format:"Author: %an%nMessage: %s%nChanges:"
-          git diff HEAD~1 HEAD --stat
-
-          # Save commit info for Claude
-          git log -1 --pretty=format:"The build failed after this commit:%n%nAuthor: %an%nMessage: %s%n" > commit_context.txt
-          echo -e "\nFiles changed:" >> commit_context.txt
-          git diff HEAD~1 HEAD --name-only >> commit_context.txt
+          
+          # Handle case where there's only one commit
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            git diff HEAD~1 HEAD --stat
+            
+            # Save commit info for Claude
+            git log -1 --pretty=format:"The build failed after this commit:%n%nAuthor: %an%nMessage: %s%n" > commit_context.txt
+            echo -e "\nFiles changed:" >> commit_context.txt
+            git diff HEAD~1 HEAD --name-only >> commit_context.txt
+          else
+            echo "This is the first commit on the branch"
+            git log -1 --pretty=format:"The build failed on this first commit:%n%nAuthor: %an%nMessage: %s%n" > commit_context.txt
+            echo -e "\nAll files in this commit:" >> commit_context.txt
+            git ls-tree --name-only -r HEAD >> commit_context.txt
+          fi
 
       - name: Fix build errors with Claude
         uses: anthropics/claude-code-action@beta
