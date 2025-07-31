@@ -9,6 +9,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  id-token: write  # Required for OIDC token generation
 
 jobs:
   auto-fix:
@@ -50,13 +51,14 @@ jobs:
       - name: Fix build errors with Claude
         uses: anthropics/claude-code-action@beta
         with:
-          prompt: |
+          direct_prompt: |
             The build is failing. Based on the recent commit changes in commit_context.txt,
             identify and fix any TypeScript errors, ESLint violations, or import issues.
 
             Run 'pnpm build' and 'pnpm lint' to verify your fixes work.
             Make minimal changes - only fix what's broken.
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           mode: agent
           max_turns: 20
           timeout_minutes: 10
