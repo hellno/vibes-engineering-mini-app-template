@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import sdk from "@farcaster/miniapp-sdk";
 import { Context } from "@farcaster/miniapp-core";
 
-export function useMiniAppSdk()
+export function useMiniAppSdk() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
 
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
