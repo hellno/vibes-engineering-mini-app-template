@@ -19,7 +19,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 
     posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
       api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-      persistence: "memory",
+      persistence: "localStorage",
       person_profiles: "identified_only",
       loaded: (ph) => {
         // Generate anonymous session ID without identifying
