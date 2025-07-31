@@ -6,11 +6,6 @@ on:
     types: [completed]
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
-  id-token: write  # Required for OIDC token generation
-
 jobs:
   auto-fix:
     # Only run if: (build failed and not auto-fix) OR manual trigger
@@ -20,12 +15,17 @@ jobs:
        !contains(github.event.workflow_run.head_commit.message, '[auto-fix]')) ||
       github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || github.event.workflow_run.head_branch }}
           fetch-depth: 2 # Get last 2 commits for context
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get last commit info
         id: last_commit
