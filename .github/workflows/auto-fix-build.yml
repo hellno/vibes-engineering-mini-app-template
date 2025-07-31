@@ -40,37 +40,50 @@ jobs:
         ref: ${{ github.event_name == 'workflow_dispatch' && (inputs.branch || github.ref) || github.event.workflow_run.head_branch }}
         token: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Set test mode errors
+      id: test_errors
+      if: github.event_name == 'workflow_dispatch' && inputs.test_mode == true
+      run: |
+        cat > test_errors.txt << 'EOF'
+        --- Build/Lint Output ---
+        
+        src/components/ui/button.tsx:10:5 - error TS2322: Type 'string' is not assignable to type 'number'.
+          10     const count: number = "0";
+                 ~~~~~
+        
+        src/hooks/useMobile.ts:15:10 - error TS2305: Module '"react"' has no exported member 'useWrongHook'.
+          15  import { useWrongHook } from 'react';
+                      ~~~~~~~~~~~~
+        
+        src/app/app.tsx:25:3  error  'unusedVariable' is assigned a value but never used  @typescript-eslint/no-unused-vars
+        
+        ERROR: Failed to compile.
+        EOF
+        
+        # Output the errors for use in next step
+        echo "ERRORS_OUTPUT<<EOF" >> $GITHUB_OUTPUT
+        cat test_errors.txt >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
     - name: Get build error logs
       id: get_logs
       uses: actions/github-script@v7
       with:
         script: |
-          // For manual test mode, return sample errors
+          // For manual test mode, return the test errors
           if ('${{ github.event_name }}' === 'workflow_dispatch' && '${{ inputs.test_mode }}' === 'true') {
             console.log('Running in test mode with sample errors');
-            return [
-              '--- Build/Lint Output ---',
-              '',
-              'src/components/ui/button.tsx:10:5 - error TS2322: Type \'string\' is not assignable to type \'number\'.',
-              '  10     const count: number = "0";',
-              '         ~~~~~',
-              '',
-              'src/hooks/useMobile.ts:15:10 - error TS2305: Module \'"react"\' has no exported member \'useWrongHook\'.',
-              '  15  import { useWrongHook } from \'react\';',
-              '              ~~~~~~~~~~~~',
-              '',
-              'src/app/app.tsx:25:3  error  \'unusedVariable\' is assigned a value but never used  @typescript-eslint/no-unused-vars',
-              '',
-              'ERROR: Failed to compile.'
-            ].join('\n');
+            return '${{ steps.test_errors.outputs.ERRORS_OUTPUT }}';
           }
           
           // For workflow_run trigger, get actual logs
           if ('${{ github.event_name }}' === 'workflow_run') {
+            const runId = parseInt('${{ github.event.workflow_run.id }}');
+            
             const { data: { jobs } } = await github.rest.actions.listJobsForWorkflowRun({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              run_id: ${{ github.event.workflow_run.id }}
+              run_id: runId
             });
             
             const failedJob = jobs.find(job => job.conclusion === 'failure');
@@ -143,7 +156,7 @@ jobs:
             return relevantErrors;
           }
           
-          // For manual trigger without test mode, check current build
+          // For manual trigger without test mode
           console.log('Manual trigger - running build to check for errors');
           return 'Manual trigger - please check build output';
 
@@ -208,29 +221,56 @@ jobs:
         # Stage all changes
         git add -A
         
-        # Create commit message
-        git commit -m "fix: auto-fix build errors with Claude Code
-
+        # Create commit message with proper multiline format
+        cat > commit_msg.txt << 'EOF'
+        fix: auto-fix build errors with Claude Code
+        
         Automated fix for build errors detected in workflow run #${{ github.event.workflow_run.run_number }}
         
-        Fixed by Claude Code Action based on build failure analysis."
+        Fixed by Claude Code Action based on build failure analysis.
+        EOF
+        
+        git commit -F commit_msg.txt
         
         # Push changes
         git push
 
+    - name: Create PR comment message
+      id: pr_comment
+      if: steps.check_changes.outputs.changes == 'true' && github.event.workflow_run.event == 'pull_request'
+      run: |
+        cat > pr_comment.md << 'EOF'
+        🤖 **Claude Code Auto-Fix**
+        
+        I've automatically fixed the build errors in this PR. The changes have been pushed to the branch.
+        
+        **Fixed issues:**
+        - TypeScript compilation errors
+        - ESLint violations
+        - Import/export issues
+        
+        Please review the changes to ensure they align with your intentions.
+        
+        *Triggered by failed workflow run [#${{ github.event.workflow_run.run_number }}](${{ github.event.workflow_run.html_url }})*
+        EOF
+        
+        # Set as output
+        echo "COMMENT_BODY<<EOF" >> $GITHUB_OUTPUT
+        cat pr_comment.md >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
     - name: Comment on PR if applicable
-      if: |
-        steps.check_changes.outputs.changes == 'true' && 
-        github.event.workflow_run.event == 'pull_request'
+      if: steps.check_changes.outputs.changes == 'true' && github.event.workflow_run.event == 'pull_request'
       uses: actions/github-script@v7
       with:
         script: |
           // Find PRs associated with this branch
+          const branchName = '${{ github.event.workflow_run.head_branch }}';
           const { data: pulls } = await github.rest.pulls.list({
             owner: context.repo.owner,
             repo: context.repo.repo,
             state: 'open',
-            head: `${context.repo.owner}:${context.payload.workflow_run.head_branch}`
+            head: `${context.repo.owner}:${branchName}`
           });
           
           if (pulls.length > 0) {
@@ -239,18 +279,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: pr.number,
-              body: `🤖 **Claude Code Auto-Fix**
-              
-I've automatically fixed the build errors in this PR. The changes have been pushed to the branch.
-
-**Fixed issues:**
-- TypeScript compilation errors
-- ESLint violations  
-- Import/export issues
-
-Please review the changes to ensure they align with your intentions.
-
-*Triggered by failed workflow run [#${{ github.event.workflow_run.run_number }}](${{ github.event.workflow_run.html_url }})*`
+              body: '${{ steps.pr_comment.outputs.COMMENT_BODY }}'
             });
           }
 
