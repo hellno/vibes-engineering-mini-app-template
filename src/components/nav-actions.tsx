@@ -23,6 +23,7 @@ import {
 import { useRouter } from "next/navigation";
 import { PROJECT_CREATOR } from "~/lib/constants";
 import { useMiniAppSdk } from "~/hooks/use-miniapp-sdk";
+import { GitFork } from "lucide-react";
 
 type NavItem = {
   label: string;
@@ -37,6 +38,15 @@ type NavItem = {
       action: () => void;
     }
 );
+
+// Get GitHub repo URL from env or construct from Vercel env vars
+// Note: Vercel system env vars are automatically exposed with NEXT_PUBLIC_ prefix
+const githubRepoUrl =
+  process.env.NEXT_PUBLIC_GITHUB_REPO_URL ||
+  (process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER &&
+  process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG
+    ? `https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}`
+    : undefined);
 
 const data: NavItem[][] = [
   [
@@ -61,6 +71,17 @@ const data: NavItem[][] = [
       ),
       href: "https://vibes.engineering",
     },
+    ...(githubRepoUrl
+      ? [
+          {
+            label: "Fork this mini app",
+            icon: GitFork,
+            href: `https://vibes.engineering?repoUrl=${encodeURIComponent(
+              githubRepoUrl,
+            )}`,
+          },
+        ]
+      : []),
   ],
   [
     {
