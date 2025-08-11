@@ -40,10 +40,12 @@ type NavItem = {
 );
 
 // Get GitHub repo URL from env or construct from Vercel env vars
+// Note: Vercel system env vars are automatically exposed with NEXT_PUBLIC_ prefix
 const githubRepoUrl =
   process.env.NEXT_PUBLIC_GITHUB_REPO_URL ||
-  (process.env.VERCEL_GIT_REPO_OWNER && process.env.VERCEL_GIT_REPO_SLUG
-    ? `https://github.com/${process.env.VERCEL_GIT_REPO_OWNER}/${process.env.VERCEL_GIT_REPO_SLUG}`
+  (process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER &&
+  process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG
+    ? `https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}`
     : undefined);
 
 const data: NavItem[][] = [
