@@ -2,10 +2,9 @@
 import "~/app/globals.css";
 import type { Metadata } from "next";
 import { ThemeProviderClient } from "~/components/providers/theme-provider-client";
-import { ThemeToggle } from "~/components/ui/theme-toggle";
 import { PROJECT_TITLE, PROJECT_DESCRIPTION } from "~/lib/constants";
 import { Providers } from "~/app/providers";
-import { NavActions } from "~/components/nav-actions";
+import { MinimalNavbar } from "~/components/minimal-navbar";
 import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
 
 const appUrl =
@@ -37,15 +36,7 @@ export default async function RootLayout({
           <Providers>
             <SidebarProvider>
               <SidebarInset>
-                <header className="flex h-14 shrink-0 items-center gap-2">
-                  <div className="flex flex-1 items-center gap-2 px-3">
-                    <span className="ml-2 line-clamp-1">{PROJECT_TITLE}</span>
-                  </div>
-                  <div className="ml-auto px-3 flex items-center gap-2">
-                    <ThemeToggle />
-                    <NavActions />
-                  </div>
-                </header>
+                <MinimalNavbar />
                 <div className="flex flex-1 flex-col gap-4 lg:px-4 lg:py-10">
                   {children}
                 </div>

@@ -1,9 +1,18 @@
 "use client";
 
 import * as React from "react";
-import { Home, MoreHorizontal, User, X } from "lucide-react";
+import {
+  Home,
+  MoreHorizontal,
+  User,
+  X,
+  Moon,
+  Sun,
+  GitFork,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import sdk from "@farcaster/miniapp-sdk";
+import { useTheme } from "next-themes";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -70,11 +79,71 @@ const data: NavItem[][] = [
     },
   ],
 ];
+// Get GitHub repo URL from env or construct from Vercel env vars
+// Note: Vercel system env vars are automatically exposed with NEXT_PUBLIC_ prefix
+const githubRepoUrl =
+  process.env.NEXT_PUBLIC_GITHUB_REPO_URL ||
+  (process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER &&
+  process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG
+    ? `https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}`
+    : undefined);
 
 export function NavActions() {
   const { isMiniApp } = useMiniAppSdk();
   const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
+  const { theme, setTheme } = useTheme();
+
+  const data: NavItem[][] = [
+    [
+      {
+        label: theme === "dark" ? "Light Mode" : "Dark Mode",
+        icon: theme === "dark" ? Sun : Moon,
+        action: () => setTheme(theme === "dark" ? "light" : "dark"),
+      },
+    ],
+    [
+      {
+        label: "Home",
+        icon: Home,
+        href: "/",
+      },
+      {
+        label: `Made by ${PROJECT_CREATOR}`,
+        icon: User,
+        href: `https://farcaster.xyz/${PROJECT_CREATOR}`,
+      },
+      {
+        label: "Built with Vibes",
+        icon: () => (
+          <img
+            src="https://vibes.engineering/icon.png"
+            className="h-5 w-5"
+            alt="Vibes"
+          />
+        ),
+        href: "https://vibes.engineering",
+      },
+      ...(githubRepoUrl
+        ? [
+            {
+              label: "Copy and Customize",
+              icon: GitFork,
+              href: `https://vibes.engineering?repoUrl=${encodeURIComponent(
+                githubRepoUrl,
+              )}`,
+            },
+          ]
+        : []),
+    ],
+    [
+      {
+        label: "Close",
+        icon: X,
+        action: () => sdk.actions.close(),
+      },
+    ],
+  ];
 
   return (
     <div className="flex items-center gap-2 text-sm">
