@@ -32,7 +32,6 @@ import {
 import { useRouter } from "next/navigation";
 import { PROJECT_CREATOR } from "~/lib/constants";
 import { useMiniAppSdk } from "~/hooks/use-miniapp-sdk";
-import { GitFork } from "lucide-react";
 
 type NavItem = {
   label: string;
@@ -48,58 +47,6 @@ type NavItem = {
     }
 );
 
-// Get GitHub repo URL from env or construct from Vercel env vars
-// Note: Vercel system env vars are automatically exposed with NEXT_PUBLIC_ prefix
-const githubRepoUrl =
-  process.env.NEXT_PUBLIC_GITHUB_REPO_URL ||
-  (process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER &&
-  process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG
-    ? `https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}`
-    : undefined);
-
-const data: NavItem[][] = [
-  [
-    {
-      label: "Home",
-      icon: Home,
-      href: "/",
-    },
-    {
-      label: `Made by ${PROJECT_CREATOR}`,
-      icon: User,
-      href: `https://farcaster.xyz/${PROJECT_CREATOR}`,
-    },
-    {
-      label: "Built with Vibes",
-      icon: () => (
-        <img
-          src="https://vibes.engineering/icon.png"
-          className="h-5 w-5"
-          alt="Vibes"
-        />
-      ),
-      href: "https://vibes.engineering",
-    },
-    ...(githubRepoUrl
-      ? [
-          {
-            label: "Fork this mini app",
-            icon: GitFork,
-            href: `https://vibes.engineering?repoUrl=${encodeURIComponent(
-              githubRepoUrl,
-            )}`,
-          },
-        ]
-      : []),
-  ],
-  [
-    {
-      label: "Close",
-      icon: X,
-      action: () => sdk.actions.close(),
-    },
-  ],
-];
 // Get GitHub repo URL from env or construct from Vercel env vars
 // Note: Vercel system env vars are automatically exposed with NEXT_PUBLIC_ prefix
 const githubRepoUrl =
@@ -139,7 +86,8 @@ export function NavActions() {
         icon: () => (
           <img
             src="https://vibes.engineering/icon.png"
-            className="h-5 w-5"
+            className
+            ="h-5 w-5"
             alt="Vibes"
           />
         ),

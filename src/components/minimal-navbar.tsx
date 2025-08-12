@@ -1,20 +1,20 @@
 "use client";
 
-import { Avatar } from "~/components/ui/avatar";
+import { UserAvatar } from "~/components/avatar";
 import { NavActions } from "~/components/nav-actions";
 import { useMiniAppSdk } from "~/hooks/use-miniapp-sdk";
 
 export function MinimalNavbar() {
-  const { user, isLoaded: isSDKLoaded } = useMiniAppSdk();
+  const { context, isSDKLoaded } = useMiniAppSdk();
+  const user = context?.user;
   
   return (
     <header className="sticky top-0 z-50 flex h-12 shrink-0 items-center justify-between bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       {/* Left: User Avatar */}
       <div className="px-4">
         {isSDKLoaded && user ? (
-          <Avatar
+          <UserAvatar
             src={user.pfpUrl}
-            alt={user.username || "User"}
             fallback={user.username?.[0]?.toUpperCase() || "U"}
             size={32}
           />
