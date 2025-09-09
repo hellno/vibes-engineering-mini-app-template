@@ -20,7 +20,7 @@
     "@farcaster/miniapp-sdk": "^0.1.7",
     "@farcaster/miniapp-wagmi-connector": "^1.0.0",
     "@hookform/resolvers": "^3.10.0",
-    "@neynar/nodejs-sdk": "^2.19.0",
+    "@neynar/nodejs-sdk": "^3.34.0",
     "@radix-ui/react-accordion": "^1.2.3",
     "@radix-ui/react-alert-dialog": "^1.1.6",
     "@radix-ui/react-aspect-ratio": "^1.1.2",
@@ -63,7 +63,7 @@
     "input-otp": "^1.4.2",
     "lucide-react": "^0.469.0",
     "mipd": "^0.0.7",
-    "next": "15.3.2",
+    "next": "15.5.2",
     "next-auth": "^4.24.11",
     "next-themes": "^0.4.5",
     "ox": "^0.4.4",
@@ -94,5 +94,11 @@
     "tailwindcss": "^3.4.17",
     "turbo": "^2.5.3",
     "typescript": "^5.8.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "form-data": "^4.0.4",
+      "tmp": "^0.2.4"
+    }
   }
 }
