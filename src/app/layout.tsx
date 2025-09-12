@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import "~/app/globals.css";
 import type { Metadata } from "next";
 import { ThemeProviderClient } from "~/components/providers/theme-provider-client";

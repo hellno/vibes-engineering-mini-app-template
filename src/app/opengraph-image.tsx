@@ -104,7 +104,6 @@ export default async function Image() {
                 boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
               }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={PROJECT_AVATAR_URL}
                 alt="User avatar"
